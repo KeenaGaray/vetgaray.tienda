@@ -3,63 +3,63 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
-import { Loader2, Dog, Cat, Pill, Utensils, Package, Tag, ChevronRight } from "lucide-react";
+import { Loader2, Package, ChevronRight } from "lucide-react";
 
 const collections: Record<string, { 
   name: string; 
   query: string; 
   description: string;
-  icon: typeof Dog;
-  color: string;
+  tagline: string;
+  imageUrl: string;
 }> = {
   perros: {
     name: "Perros",
     query: "product_type:perros OR tag:perro OR tag:perros OR title:perro*",
     description: "Todo lo que tu perro necesita: alimentos, medicamentos, accesorios y más.",
-    icon: Dog,
-    color: "bg-amber-500",
+    tagline: "El mejor amigo merece lo mejor",
+    imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80",
   },
   gatos: {
     name: "Gatos",
     query: "product_type:gatos OR tag:gato OR tag:gatos OR title:gato*",
     description: "Productos especiales para el cuidado y bienestar de tu gato.",
-    icon: Cat,
-    color: "bg-pink-500",
+    tagline: "Cuidado premium para felinos exigentes",
+    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1920&q=80",
   },
   farmacia: {
-    name: "Farmacia",
+    name: "Farmacia Veterinaria",
     query: "product_type:farmacia OR tag:medicamento OR tag:farmacia OR tag:veterinaria",
     description: "Medicamentos veterinarios, antiparasitarios, vitaminas y tratamientos.",
-    icon: Pill,
-    color: "bg-primary",
+    tagline: "Salud y bienestar para tu mascota",
+    imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1920&q=80",
   },
   alimentos: {
     name: "Alimentos",
     query: "product_type:alimentos OR tag:alimento OR tag:comida OR title:alimento*",
     description: "Alimentos balanceados de las mejores marcas para perros y gatos.",
-    icon: Utensils,
-    color: "bg-green-500",
+    tagline: "Nutrición de calidad para una vida saludable",
+    imageUrl: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=1920&q=80",
   },
   accesorios: {
     name: "Accesorios",
     query: "product_type:accesorios OR tag:accesorio OR tag:juguete",
     description: "Collares, correas, camas, juguetes y todo para consentir a tu mascota.",
-    icon: Package,
-    color: "bg-purple-500",
+    tagline: "Todo para consentir a tu compañero",
+    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1920&q=80",
   },
   ofertas: {
-    name: "Ofertas",
+    name: "Ofertas Especiales",
     query: "tag:oferta OR tag:descuento OR tag:promocion",
     description: "Los mejores precios en productos seleccionados. ¡Aprovechá!",
-    icon: Tag,
-    color: "bg-accent",
+    tagline: "Los mejores precios del mercado",
+    imageUrl: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80",
   },
   todos: {
-    name: "Todos los productos",
+    name: "Todos los Productos",
     query: "",
     description: "Explorá nuestro catálogo completo de productos para mascotas.",
-    icon: Package,
-    color: "bg-primary",
+    tagline: "Todo lo que tu mascota necesita en un solo lugar",
+    imageUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1920&q=80",
   },
 };
 
@@ -114,33 +114,45 @@ export default function Collection() {
     );
   }
 
-  const Icon = collection.icon;
-
   return (
     <Layout>
-      {/* Breadcrumb */}
-      <div className="bg-muted/50 border-b border-border">
-        <div className="container py-3">
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition-colors">
-              Inicio
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground font-medium">{collection.name}</span>
-          </nav>
+      {/* Hero Banner */}
+      <section className="relative h-48 md:h-64 overflow-hidden">
+        {/* Background Image */}
+        <img
+          src={collection.imageUrl}
+          alt={collection.name}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+        
+        {/* Breadcrumb */}
+        <div className="absolute top-0 left-0 right-0">
+          <div className="container py-4">
+            <nav className="flex items-center gap-2 text-sm text-white/80">
+              <Link to="/" className="hover:text-white transition-colors">
+                Inicio
+              </Link>
+              <ChevronRight className="h-4 w-4" />
+              <span className="text-white font-medium">{collection.name}</span>
+            </nav>
+          </div>
         </div>
-      </div>
-
-      {/* Header */}
-      <section className="py-8 md:py-12">
-        <div className="container">
-          <div className="flex items-center gap-4 mb-4">
-            <div className={`${collection.color} p-3 rounded-xl text-white`}>
-              <Icon className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold">{collection.name}</h1>
-              <p className="text-muted-foreground mt-1">{collection.description}</p>
+        
+        {/* Content */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="container">
+            <div className="max-w-xl">
+              <p className="text-white/80 text-sm md:text-base font-medium mb-2 tracking-wide uppercase">
+                {collection.tagline}
+              </p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white drop-shadow-lg mb-2">
+                {collection.name}
+              </h1>
+              <p className="text-white/90 text-sm md:text-base max-w-md">
+                {collection.description}
+              </p>
             </div>
           </div>
         </div>
@@ -155,7 +167,7 @@ export default function Collection() {
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-16 bg-muted/30 rounded-xl">
-              <Icon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">No hay productos en esta categoría</h2>
               <p className="text-muted-foreground mb-4">
                 Pronto agregaremos más productos. ¡Volvé a visitarnos!
