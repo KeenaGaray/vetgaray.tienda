@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Phone, Heart } from "lucide-react";
+import { Menu, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCartStore } from "@/stores/cartStore";
 import { CartDrawer } from "./CartDrawer";
+import logoVetGaray from "@/assets/logo_vet_garay.png";
 
 const navigation = [
   { name: "Inicio", href: "/" },
@@ -48,9 +48,7 @@ export function Header() {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Heart className="h-6 w-6" />
-            </div>
+            <img src={logoVetGaray} alt="Vet Garay" className="h-12 w-12 rounded-xl object-contain" />
             <span className="font-display text-xl font-bold text-foreground leading-tight">
               Vet Garay
             </span>
@@ -87,9 +85,7 @@ export function Header() {
               <SheetContent side="right" className="w-80">
                 <div className="flex flex-col gap-4 mt-8">
                   <Link to="/" className="flex items-center gap-3 mb-6" onClick={() => setMobileMenuOpen(false)}>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                      <Heart className="h-5 w-5" />
-                    </div>
+                    <img src={logoVetGaray} alt="Vet Garay" className="h-10 w-10 rounded-xl object-contain" />
                     <span className="font-display text-lg font-bold">Vet Garay</span>
                   </Link>
                   

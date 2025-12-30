@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Heart, Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
+import logoVetGaray from "@/assets/logo_vet_garay.png";
 
 const footerLinks = {
   productos: [
@@ -27,9 +28,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Heart className="h-6 w-6" />
-              </div>
+              <img src={logoVetGaray} alt="Vet Garay" className="h-12 w-12 rounded-xl object-contain" />
               <span className="font-display text-lg font-bold leading-tight">
                 Vet Garay
               </span>
