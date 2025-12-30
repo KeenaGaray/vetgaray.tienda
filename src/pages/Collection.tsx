@@ -5,6 +5,54 @@ import { ProductCard } from "@/components/products/ProductCard";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Loader2, Package, ChevronRight } from "lucide-react";
 
+interface Subcategory {
+  name: string;
+  imageUrl: string;
+  query: string;
+}
+
+const subcategories: Record<string, Subcategory[]> = {
+  perros: [
+    { name: "Alimentos", imageUrl: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=200&q=80", query: "alimento perro" },
+    { name: "Medicamentos", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&q=80", query: "medicamento perro" },
+    { name: "Accesorios", imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200&q=80", query: "accesorio perro" },
+    { name: "Comederos", imageUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=200&q=80", query: "comedero perro" },
+    { name: "Indumentaria", imageUrl: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=200&q=80", query: "ropa perro" },
+    { name: "Correas", imageUrl: "https://images.unsplash.com/photo-1567612529009-afe25813a308?w=200&q=80", query: "correa perro" },
+  ],
+  gatos: [
+    { name: "Alimentos", imageUrl: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=200&q=80", query: "alimento gato" },
+    { name: "Medicamentos", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&q=80", query: "medicamento gato" },
+    { name: "Accesorios", imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200&q=80", query: "accesorio gato" },
+    { name: "Rascadores", imageUrl: "https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=200&q=80", query: "rascador gato" },
+    { name: "Areneros", imageUrl: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=200&q=80", query: "arenero gato" },
+    { name: "Juguetes", imageUrl: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=200&q=80", query: "juguete gato" },
+  ],
+  farmacia: [
+    { name: "Antiparasitarios", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&q=80", query: "antiparasitario" },
+    { name: "Vitaminas", imageUrl: "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=200&q=80", query: "vitamina mascota" },
+    { name: "Antibióticos", imageUrl: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&q=80", query: "antibiotico" },
+    { name: "Dermatológicos", imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&q=80", query: "dermatologico" },
+    { name: "Suplementos", imageUrl: "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=200&q=80", query: "suplemento mascota" },
+  ],
+  alimentos: [
+    { name: "Perros", imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&q=80", query: "alimento perro" },
+    { name: "Gatos", imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&q=80", query: "alimento gato" },
+    { name: "Premium", imageUrl: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=200&q=80", query: "alimento premium" },
+    { name: "Medicados", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&q=80", query: "alimento medicado" },
+    { name: "Snacks", imageUrl: "https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?w=200&q=80", query: "snack mascota" },
+  ],
+  accesorios: [
+    { name: "Camas", imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200&q=80", query: "cama mascota" },
+    { name: "Juguetes", imageUrl: "https://images.unsplash.com/photo-1535294435445-d7249524ef2e?w=200&q=80", query: "juguete mascota" },
+    { name: "Transportadoras", imageUrl: "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=200&q=80", query: "transportadora mascota" },
+    { name: "Collares", imageUrl: "https://images.unsplash.com/photo-1567612529009-afe25813a308?w=200&q=80", query: "collar mascota" },
+    { name: "Platos", imageUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=200&q=80", query: "plato mascota" },
+  ],
+  ofertas: [],
+  todos: [],
+};
+
 const collections: Record<string, { 
   name: string; 
   query: string; 
@@ -69,14 +117,19 @@ export default function Collection() {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
 
   const collection = slug ? collections[slug] : collections.todos;
+  const currentSubcategories = slug ? subcategories[slug] || [] : [];
 
   useEffect(() => {
     async function loadProducts() {
       setLoading(true);
       try {
-        const response = await fetchProducts(24, collection?.query || undefined);
+        const query = activeSubcategory 
+          ? `title:*${activeSubcategory}* OR tag:${activeSubcategory}`
+          : collection?.query || undefined;
+        const response = await fetchProducts(24, query);
         setProducts(response.data.products.edges);
         setHasMore(response.data.products.pageInfo.hasNextPage);
         setCursor(response.data.products.pageInfo.endCursor);
@@ -87,12 +140,20 @@ export default function Collection() {
       }
     }
     loadProducts();
-  }, [slug, collection?.query]);
+  }, [slug, collection?.query, activeSubcategory]);
+
+  // Reset subcategory when changing collection
+  useEffect(() => {
+    setActiveSubcategory(null);
+  }, [slug]);
 
   const loadMore = async () => {
     if (!cursor) return;
     try {
-      const response = await fetchProducts(24, collection?.query || undefined, cursor);
+      const query = activeSubcategory 
+        ? `title:*${activeSubcategory}* OR tag:${activeSubcategory}`
+        : collection?.query || undefined;
+      const response = await fetchProducts(24, query, cursor);
       setProducts((prev) => [...prev, ...response.data.products.edges]);
       setHasMore(response.data.products.pageInfo.hasNextPage);
       setCursor(response.data.products.pageInfo.endCursor);
@@ -158,8 +219,63 @@ export default function Collection() {
         </div>
       </section>
 
+      {/* Subcategories */}
+      {currentSubcategories.length > 0 && (
+        <section className="py-6 bg-muted/30 border-b border-border">
+          <div className="container">
+            <div className="flex gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+              {/* All button */}
+              <button
+                onClick={() => setActiveSubcategory(null)}
+                className={`flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group`}
+              >
+                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                  activeSubcategory === null 
+                    ? 'border-primary ring-2 ring-primary/30' 
+                    : 'border-border group-hover:border-primary/50'
+                }`}>
+                  <div className="w-full h-full bg-primary flex items-center justify-center">
+                    <Package className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                </div>
+                <span className={`text-xs md:text-sm font-medium text-center ${
+                  activeSubcategory === null ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                }`}>
+                  Todos
+                </span>
+              </button>
+
+              {currentSubcategories.map((sub) => (
+                <button
+                  key={sub.name}
+                  onClick={() => setActiveSubcategory(sub.query)}
+                  className={`flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group`}
+                >
+                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                    activeSubcategory === sub.query 
+                      ? 'border-primary ring-2 ring-primary/30' 
+                      : 'border-border group-hover:border-primary/50'
+                  }`}>
+                    <img
+                      src={sub.imageUrl}
+                      alt={sub.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <span className={`text-xs md:text-sm font-medium text-center ${
+                    activeSubcategory === sub.query ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                  }`}>
+                    {sub.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Products Grid */}
-      <section className="pb-16">
+      <section className="py-8 pb-16">
         <div className="container">
           {loading ? (
             <div className="flex items-center justify-center py-16">
