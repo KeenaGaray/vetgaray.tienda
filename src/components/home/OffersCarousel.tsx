@@ -18,9 +18,33 @@ export function OffersCarousel() {
       loop: true, 
       align: "start",
       slidesToScroll: 1,
+      dragFree: true,
     },
-    [Autoplay({ delay: 3000, stopOnInteraction: false })]
+    [Autoplay({ delay: 0, stopOnInteraction: false, playOnInit: true })]
   );
+
+  // Continuous scroll effect
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    let animationId: number;
+    
+    const animate = () => {
+      if (emblaApi.canScrollNext()) {
+        emblaApi.scrollNext();
+      }
+      animationId = requestAnimationFrame(() => {
+        setTimeout(animate, 2000);
+      });
+    };
+    
+    const timer = setTimeout(animate, 2000);
+    
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(animationId);
+    };
+  }, [emblaApi]);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -42,10 +66,10 @@ export function OffersCarousel() {
 
   if (loading) {
     return (
-      <section className="py-10 md:py-12 bg-accent/10">
+      <section className="py-10 md:py-12">
         <div className="container">
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         </div>
       </section>
@@ -57,7 +81,7 @@ export function OffersCarousel() {
   }
 
   return (
-    <section className="py-10 md:py-12 bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10">
+    <section className="py-10 md:py-12">
       <div className="container">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
