@@ -4,8 +4,9 @@ import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Button } from "@/components/ui/button";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { OffersCarousel } from "@/components/home/OffersCarousel";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
-import { Truck, Shield, Clock, Heart, Dog, Cat, Pill, Package, ArrowRight, Loader2 } from "lucide-react";
+import { Truck, Shield, Clock, Heart, ArrowRight, Loader2 } from "lucide-react";
 
 const categories = [
   { 
@@ -105,6 +106,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Offers Carousel */}
+      <OffersCarousel />
 
       {/* Products */}
       <section className="py-12 md:py-16 bg-muted/50">
