@@ -46,12 +46,12 @@ export function ProductCard({ product }: ProductCardProps) {
       to={`/producto/${node.handle}`}
       className="group block rounded-xl bg-card shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden"
     >
-      <div className="relative aspect-square bg-secondary/30 overflow-hidden">
+      <div className="relative aspect-square bg-white overflow-hidden">
         {image ? (
           <img
             src={image.url}
             alt={image.altText || node.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
