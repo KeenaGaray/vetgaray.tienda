@@ -205,4 +205,23 @@
       transform: translateY(0); 
     }
   }
+
+  /* Coin flip animation */
+  @keyframes coinFlip {
+    0% {
+      transform: rotateY(0deg);
+    }
+    100% {
+      transform: rotateY(360deg);
+    }
+  }
+
+  .coin-flip {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
+
+  .coin-flip:hover {
+    animation: coinFlip 0.6s ease-in-out;
+  }
 }
