@@ -12,7 +12,8 @@ export interface HeroSlide {
   buttonLink: string;
   secondaryButtonText?: string;
   secondaryButtonLink?: string;
-  backgroundClass?: string;
+  imageUrl?: string;
+  overlayClass?: string;
 }
 
 const defaultSlides: HeroSlide[] = [
@@ -24,7 +25,8 @@ const defaultSlides: HeroSlide[] = [
     buttonLink: "/coleccion/farmacia",
     secondaryButtonText: "Contactanos",
     secondaryButtonLink: "/contacto",
-    backgroundClass: "gradient-hero",
+    imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80",
+    overlayClass: "bg-primary/60",
   },
   {
     id: "2",
@@ -32,7 +34,8 @@ const defaultSlides: HeroSlide[] = [
     subtitle: "Descubrí los mejores descuentos en productos para tu mascota. Aprovechá nuestras ofertas por tiempo limitado.",
     buttonText: "Ver Ofertas",
     buttonLink: "/coleccion/ofertas",
-    backgroundClass: "bg-gradient-to-br from-accent to-orange-600",
+    imageUrl: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80",
+    overlayClass: "bg-accent/60",
   },
   {
     id: "3",
@@ -40,7 +43,8 @@ const defaultSlides: HeroSlide[] = [
     subtitle: "Las mejores marcas de alimento balanceado para perros y gatos. Nutrición de calidad para una vida saludable.",
     buttonText: "Ver Alimentos",
     buttonLink: "/coleccion/alimentos",
-    backgroundClass: "bg-gradient-to-br from-emerald-600 to-emerald-800",
+    imageUrl: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=1920&q=80",
+    overlayClass: "bg-emerald-700/60",
   },
 ];
 
@@ -89,14 +93,26 @@ export function HeroCarousel({ slides = defaultSlides, autoplayDelay = 5000 }: H
           {slides.map((slide) => (
             <div
               key={slide.id}
-              className={`flex-[0_0_100%] min-w-0 ${slide.backgroundClass || "gradient-hero"}`}
+              className="flex-[0_0_100%] min-w-0 relative"
             >
-              <div className="container py-16 md:py-24">
+              {/* Background Image */}
+              {slide.imageUrl && (
+                <img
+                  src={slide.imageUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
+              {/* Overlay */}
+              <div className={`absolute inset-0 ${slide.overlayClass || "bg-primary/60"}`} />
+              
+              {/* Content */}
+              <div className="container py-16 md:py-24 relative z-10">
                 <div className="max-w-2xl animate-fade-in">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight text-primary-foreground">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight text-white drop-shadow-lg">
                     {slide.title}
                   </h1>
-                  <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
+                  <p className="text-xl md:text-2xl mb-8 text-white/90 drop-shadow">
                     {slide.subtitle}
                   </p>
                   <div className="flex flex-wrap gap-4">
@@ -108,7 +124,7 @@ export function HeroCarousel({ slides = defaultSlides, autoplayDelay = 5000 }: H
                         asChild 
                         size="lg" 
                         variant="outline" 
-                        className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+                        className="border-white text-white hover:bg-white/10"
                       >
                         <Link to={slide.secondaryButtonLink}>{slide.secondaryButtonText}</Link>
                       </Button>
