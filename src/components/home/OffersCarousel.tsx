@@ -1,34 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import useEmblaCarousel from "embla-carousel-react";
-import AutoScroll from "embla-carousel-auto-scroll";
 import { fetchProducts, ShopifyProduct, formatPrice, getDiscountPercentage } from "@/lib/shopify";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, ChevronLeft, ChevronRight, Loader2, Tag, ArrowRight } from "lucide-react";
+import { ShoppingCart, Loader2, Tag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
 export function OffersCarousel() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { 
-      loop: true, 
-      align: "start",
-      dragFree: true,
-    },
-    [AutoScroll({ 
-      speed: 1,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true,
-      playOnInit: true,
-    })]
-  );
-
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   useEffect(() => {
     async function loadOffers() {
@@ -61,6 +42,8 @@ export function OffersCarousel() {
     return null;
   }
 
+  const loopProducts = [...products, ...products];
+
   return (
     <section className="py-10 md:py-12">
       <div className="container">
@@ -74,31 +57,17 @@ export function OffersCarousel() {
               <p className="text-muted-foreground text-sm">Aprovechá los mejores descuentos</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={scrollPrev}
-              className="p-2 rounded-full bg-background border border-border hover:bg-muted transition-colors"
-              aria-label="Anterior"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={scrollNext}
-              className="p-2 rounded-full bg-background border border-border hover:bg-muted transition-colors"
-              aria-label="Siguiente"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-            <Button asChild variant="ghost" className="hidden md:flex">
-              <Link to="/coleccion/ofertas">Ver todas <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-          </div>
+          <Button asChild variant="ghost" className="hidden md:flex">
+            <Link to="/coleccion/ofertas">Ver todas <ArrowRight className="ml-2 h-4 w-4" /></Link>
+          </Button>
         </div>
 
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4">
-            {products.map((product) => (
-              <OfferCard key={product.node.id} product={product} />
+        <div className="marquee">
+          <div className="marquee-track">
+            {loopProducts.map((product, idx) => (
+              <div key={`${product.node.id}-${idx}`} className="marquee-item">
+                <OfferCard product={product} />
+              </div>
             ))}
           </div>
         </div>
