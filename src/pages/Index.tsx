@@ -8,10 +8,30 @@ import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Truck, Shield, Clock, Heart, Dog, Cat, Pill, Package, ArrowRight, Loader2 } from "lucide-react";
 
 const categories = [
-  { name: "Perros", icon: Dog, href: "/coleccion/perros", color: "bg-amber-500" },
-  { name: "Gatos", icon: Cat, href: "/coleccion/gatos", color: "bg-pink-500" },
-  { name: "Farmacia", icon: Pill, href: "/coleccion/farmacia", color: "bg-primary" },
-  { name: "Accesorios", icon: Package, href: "/coleccion/accesorios", color: "bg-purple-500" },
+  { 
+    name: "Perros", 
+    href: "/coleccion/perros", 
+    imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80",
+    description: "Alimentos, medicamentos y accesorios"
+  },
+  { 
+    name: "Gatos", 
+    href: "/coleccion/gatos", 
+    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+    description: "Todo para el cuidado felino"
+  },
+  { 
+    name: "Farmacia", 
+    href: "/coleccion/farmacia", 
+    imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&q=80",
+    description: "Medicamentos y tratamientos"
+  },
+  { 
+    name: "Accesorios", 
+    href: "/coleccion/accesorios", 
+    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80",
+    description: "Juguetes, camas y más"
+  },
 ];
 
 const features = [
@@ -47,20 +67,39 @@ export default function Index() {
       {/* Categories */}
       <section className="py-12 md:py-16">
         <div className="container">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-3">
             Explorá por categoría
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
+            Encontrá todo lo que tu mascota necesita en nuestras categorías especializadas
+          </p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {categories.map((cat) => (
               <Link
                 key={cat.name}
                 to={cat.href}
-                className="group flex flex-col items-center p-6 rounded-xl bg-card shadow-card hover:shadow-hover transition-all"
+                className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-card hover:shadow-hover transition-all"
               >
-                <div className={`${cat.color} p-4 rounded-full text-white mb-4 group-hover:scale-110 transition-transform`}>
-                  <cat.icon className="h-8 w-8" />
+                {/* Background Image */}
+                <img
+                  src={cat.imageUrl}
+                  alt={cat.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-6">
+                  <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-1 drop-shadow-lg">
+                    {cat.name}
+                  </h3>
+                  <p className="text-white/80 text-sm md:text-base drop-shadow">
+                    {cat.description}
+                  </p>
+                  <div className="mt-3 flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    Ver productos <ArrowRight className="ml-2 h-4 w-4" />
+                  </div>
                 </div>
-                <span className="font-semibold">{cat.name}</span>
               </Link>
             ))}
           </div>
