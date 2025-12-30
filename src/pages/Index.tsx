@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Button } from "@/components/ui/button";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Truck, Shield, Clock, Heart, Dog, Cat, Pill, Package, ArrowRight, Loader2 } from "lucide-react";
 
@@ -40,27 +41,8 @@ export default function Index() {
 
   return (
     <Layout>
-      {/* Hero */}
-      <section className="gradient-hero text-primary-foreground py-16 md:py-24">
-        <div className="container">
-          <div className="max-w-2xl animate-fade-in">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight">
-              Cuidamos la salud de tu mascota
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
-              Farmacia veterinaria de confianza con productos de calidad, medicamentos y accesorios para perros y gatos.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" variant="secondary" className="text-foreground">
-                <Link to="/coleccion/farmacia">Ver Farmacia</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-                <Link to="/contacto">Contactanos</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Categories */}
       <section className="py-12 md:py-16">
