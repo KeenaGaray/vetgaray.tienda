@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
+import AutoScroll from "embla-carousel-auto-scroll";
 import { fetchProducts, ShopifyProduct, formatPrice, getDiscountPercentage } from "@/lib/shopify";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,34 +17,15 @@ export function OffersCarousel() {
     { 
       loop: true, 
       align: "start",
-      slidesToScroll: 1,
       dragFree: true,
     },
-    [Autoplay({ delay: 0, stopOnInteraction: false, playOnInit: true })]
+    [AutoScroll({ 
+      speed: 1,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+      playOnInit: true,
+    })]
   );
-
-  // Continuous scroll effect
-  useEffect(() => {
-    if (!emblaApi) return;
-    
-    let animationId: number;
-    
-    const animate = () => {
-      if (emblaApi.canScrollNext()) {
-        emblaApi.scrollNext();
-      }
-      animationId = requestAnimationFrame(() => {
-        setTimeout(animate, 2000);
-      });
-    };
-    
-    const timer = setTimeout(animate, 2000);
-    
-    return () => {
-      clearTimeout(timer);
-      cancelAnimationFrame(animationId);
-    };
-  }, [emblaApi]);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
