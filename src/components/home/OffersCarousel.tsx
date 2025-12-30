@@ -116,7 +116,7 @@ function OfferCard({ product }: { product: ShopifyProduct }) {
   return (
     <Link
       to={`/producto/${node.handle}`}
-      className="flex-[0_0_200px] md:flex-[0_0_220px] group block rounded-xl bg-card shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden"
+      className="w-[180px] md:w-[200px] flex-shrink-0 group block rounded-xl bg-card shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden"
     >
       <div className="relative aspect-square bg-white overflow-hidden">
         {image ? (
