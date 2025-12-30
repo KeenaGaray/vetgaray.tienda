@@ -59,6 +59,7 @@ const collections: Record<string, {
   description: string;
   tagline: string;
   imageUrl: string;
+  videoUrl?: string;
 }> = {
   perros: {
     name: "Perros",
@@ -66,6 +67,7 @@ const collections: Record<string, {
     description: "Todo lo que tu perro necesita: alimentos, medicamentos, accesorios y más.",
     tagline: "El mejor amigo merece lo mejor",
     imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80",
+    videoUrl: "https://videos.pexels.com/video-files/4588435/4588435-uhd_2560_1440_25fps.mp4",
   },
   gatos: {
     name: "Gatos",
@@ -73,6 +75,7 @@ const collections: Record<string, {
     description: "Productos especiales para el cuidado y bienestar de tu gato.",
     tagline: "Cuidado premium para felinos exigentes",
     imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1920&q=80",
+    videoUrl: "https://videos.pexels.com/video-files/855282/855282-hd_1920_1080_30fps.mp4",
   },
   farmacia: {
     name: "Farmacia Veterinaria",
@@ -179,12 +182,24 @@ export default function Collection() {
     <Layout>
       {/* Hero Banner */}
       <section className="relative h-48 md:h-64 overflow-hidden">
-        {/* Background Image */}
-        <img
-          src={collection.imageUrl}
-          alt={collection.name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {/* Background Video or Image */}
+        {collection.videoUrl ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src={collection.videoUrl} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={collection.imageUrl}
+            alt={collection.name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
         
