@@ -67,7 +67,7 @@ const collections: Record<string, {
     description: "Todo lo que tu perro necesita: alimentos, medicamentos, accesorios y más.",
     tagline: "El mejor amigo merece lo mejor",
     imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80",
-    videoUrl: "https://cdn.pixabay.com/video/2020/07/30/45952-446417702_large.mp4",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-dog-lying-down-on-the-grass-1564-large.mp4",
   },
   gatos: {
     name: "Gatos",
@@ -75,7 +75,7 @@ const collections: Record<string, {
     description: "Productos especiales para el cuidado y bienestar de tu gato.",
     tagline: "Cuidado premium para felinos exigentes",
     imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1920&q=80",
-    videoUrl: "https://cdn.pixabay.com/video/2024/02/12/200563-912119498_large.mp4",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-cat-sitting-in-the-grass-1549-large.mp4",
   },
   farmacia: {
     name: "Farmacia Veterinaria",
@@ -248,13 +248,13 @@ export default function Collection() {
       {currentSubcategories.length > 0 && (
         <section className="py-6 bg-muted/30 border-b border-border">
           <div className="container">
-            <div className="flex gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
               {/* All button */}
               <button
                 onClick={() => setActiveSubcategory(null)}
-                className={`flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group`}
+                className="flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group"
               >
-                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all coin-flip ${
                   activeSubcategory === null 
                     ? 'border-primary ring-2 ring-primary/30' 
                     : 'border-border group-hover:border-primary/50'
@@ -274,9 +274,9 @@ export default function Collection() {
                 <button
                   key={sub.name}
                   onClick={() => setActiveSubcategory(sub.query)}
-                  className={`flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group`}
+                  className="flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group"
                 >
-                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all coin-flip ${
                     activeSubcategory === sub.query 
                       ? 'border-primary ring-2 ring-primary/30' 
                       : 'border-border group-hover:border-primary/50'
@@ -284,7 +284,7 @@ export default function Collection() {
                     <img
                       src={sub.imageUrl}
                       alt={sub.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <span className={`text-xs md:text-sm font-medium text-center ${
