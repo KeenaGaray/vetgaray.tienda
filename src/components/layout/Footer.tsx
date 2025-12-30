@@ -29,9 +29,12 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
               <img src={logoVetGaray} alt="Vet Garay" className="h-12 w-12 rounded-xl object-contain" />
-              <span className="font-display text-lg font-bold leading-tight">
-                Vet Garay
-              </span>
+              <div className="flex flex-col">
+                <span className="font-display text-lg font-bold leading-tight">
+                  Vet Garay
+                </span>
+                <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+              </div>
             </Link>
             <p className="text-background/70 text-sm mb-4">
               Tu farmacia veterinaria de confianza. Cuidamos la salud de tus mascotas con productos de calidad y asesoramiento profesional.
