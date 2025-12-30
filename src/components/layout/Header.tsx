@@ -49,9 +49,12 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img src={logoVetGaray} alt="Vet Garay" className="h-12 w-12 rounded-xl object-contain" />
-            <span className="font-display text-xl font-bold text-foreground leading-tight">
-              Vet Garay
-            </span>
+            <div className="flex flex-col">
+              <span className="font-display text-xl font-bold text-foreground leading-tight">
+                Vet Garay
+              </span>
+              <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -86,7 +89,10 @@ export function Header() {
                 <div className="flex flex-col gap-4 mt-8">
                   <Link to="/" className="flex items-center gap-3 mb-6" onClick={() => setMobileMenuOpen(false)}>
                     <img src={logoVetGaray} alt="Vet Garay" className="h-10 w-10 rounded-xl object-contain" />
-                    <span className="font-display text-lg font-bold">Vet Garay</span>
+                    <div className="flex flex-col">
+                      <span className="font-display text-lg font-bold">Vet Garay</span>
+                      <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+                    </div>
                   </Link>
                   
                   {navigation.map((item) => (
