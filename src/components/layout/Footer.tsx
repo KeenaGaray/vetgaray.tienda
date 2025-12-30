@@ -30,12 +30,9 @@ export function Footer() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                 <Heart className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <span className="font-display text-lg font-bold leading-tight">
-                  Farmacia Veterinaria
-                </span>
-                <span className="text-sm text-primary font-semibold">Garay</span>
-              </div>
+              <span className="font-display text-lg font-bold leading-tight">
+                Vet Garay
+              </span>
             </Link>
             <p className="text-background/70 text-sm mb-4">
               Tu farmacia veterinaria de confianza. Cuidamos la salud de tus mascotas con productos de calidad y asesoramiento profesional.
@@ -116,7 +113,7 @@ export function Footer() {
               </li>
               <li className="flex items-start gap-3 text-background/70">
                 <MapPin className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                <span>Av. Ejemplo 1234, CABA, Argentina</span>
+                <span>Juan de Garay 2575, Olivos, Argentina</span>
               </li>
               <li className="flex items-center gap-3 text-background/70">
                 <Clock className="h-5 w-5 flex-shrink-0" />
@@ -130,7 +127,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
         <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-background/50">
-          <p>© 2024 Farmacia Veterinaria Garay. Todos los derechos reservados.</p>
+          <p>© 2024 Vet Garay. Todos los derechos reservados.</p>
           <div className="flex gap-4">
             <img src="https://www.mercadopago.com/org-img/Manual/ManualMP/badges/2.0/badge_large.png" alt="Mercado Pago" className="h-8 opacity-70" />
           </div>

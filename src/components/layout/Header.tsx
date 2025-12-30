@@ -51,12 +51,9 @@ export function Header() {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Heart className="h-6 w-6" />
             </div>
-            <div className="flex flex-col">
-              <span className="font-display text-xl font-bold text-foreground leading-tight">
-                Farmacia Veterinaria
-              </span>
-              <span className="text-sm text-primary font-semibold">Garay</span>
-            </div>
+            <span className="font-display text-xl font-bold text-foreground leading-tight">
+              Vet Garay
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -93,7 +90,7 @@ export function Header() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                       <Heart className="h-5 w-5" />
                     </div>
-                    <span className="font-display text-lg font-bold">Farmacia Veterinaria Garay</span>
+                    <span className="font-display text-lg font-bold">Vet Garay</span>
                   </Link>
                   
                   {navigation.map((item) => (
