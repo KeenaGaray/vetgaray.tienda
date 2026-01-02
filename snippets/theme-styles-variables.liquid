@@ -190,9 +190,6 @@
     --wide-page-width: 1400px;
     --normal-content-width: 860px;
   }
-{% endstyle %}
-
-{% style %}
   {% # theme-check-disable %}
   {{ settings.type_body_font | font_face: font_display: 'swap' }}
   {{ settings.type_subheading_font | font_face: font_display: 'swap' }}
@@ -200,9 +197,3 @@
   {{ settings.type_accent_font | font_face: font_display: 'swap' }}
   {% # theme-check-enable %}
 {% endstyle %}
-{% # theme-check-disable %}
-{{ settings.type_body_font | font_face: font_display: 'swap' }}
-{{ settings.type_subheading_font | font_face: font_display: 'swap' }}
-{{ settings.type_heading_font | font_face: font_display: 'swap' }}
-{{ settings.type_accent_font | font_face: font_display: 'swap' }}
-{% # theme-check-enable %}
