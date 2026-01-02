@@ -53,7 +53,7 @@ export function Header() {
               <span className="font-display text-xl font-bold text-foreground leading-tight">
                 Vet Garay
               </span>
-              <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+              <span className="text-xs text-primary font-medium">Farmacia Veterinaria</span>
             </div>
           </Link>
 
@@ -91,7 +91,7 @@ export function Header() {
                     <img src={logoVetGaray} alt="Vet Garay" className="h-10 w-10 rounded-xl object-contain" />
                     <div className="flex flex-col">
                       <span className="font-display text-lg font-bold">Vet Garay</span>
-                      <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+                      <span className="text-xs text-primary font-medium">Farmacia Veterinaria</span>
                     </div>
                   </Link>
                   

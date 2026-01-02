@@ -33,7 +33,7 @@ export function Footer() {
                 <span className="font-display text-lg font-bold leading-tight">
                   Vet Garay
                 </span>
-                <span className="text-xs text-pink-400 font-medium">Farmacia Veterinaria</span>
+                <span className="text-xs text-primary font-medium">Farmacia Veterinaria</span>
               </div>
             </Link>
             <p className="text-background/70 text-sm mb-4">
