@@ -33,12 +33,12 @@ export function Header() {
             <span className="sm:hidden">Envíos a todo el país</span>
           </div>
           <a 
-            href="https://wa.me/5491112345678" 
+            href="https://wa.me/5491126306326" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center gap-2 hover:underline"
           >
-            <span>WhatsApp: +54 9 11 1234-5678</span>
+            <span>WhatsApp: +54 9 11 2630-6326</span>
           </a>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function Header() {
 
                   <div className="mt-6 pt-6 border-t border-border">
                     <a
-                      href="https://wa.me/5491112345678"
+                      href="https://wa.me/5491126306326"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-4 py-3 rounded-lg bg-success text-success-foreground font-medium"
