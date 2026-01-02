@@ -1,0 +1,146 @@
+:root {
+  --horizon-violet: #6c3bf5;
+  --horizon-violet-dark: #5b2fe0;
+  --horizon-violet-soft: rgba(108, 59, 245, 0.35);
+}
+
+/* Topbar */
+.announcement-bar {
+  background: var(--horizon-violet);
+}
+
+.announcement-bar,
+.announcement-bar .announcement-bar__text {
+  color: #ffffff;
+}
+
+.announcement-bar__slides {
+  width: 100%;
+  max-width: none;
+}
+
+.announcement-bar__slide {
+  width: 100%;
+}
+
+.announcement-bar__text {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--padding-md);
+  width: 100%;
+}
+
+.announcement-bar__text .topbar-left,
+.announcement-bar__text .topbar-right {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .announcement-bar__text {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .announcement-bar__text .topbar-left,
+  .announcement-bar__text .topbar-right {
+    white-space: normal;
+  }
+}
+
+/* Header layout */
+#header-component .header__row--top {
+  background: #ffffff;
+}
+
+#header-component .header__row--top .header__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+}
+
+#header-component .header__column--left {
+  justify-self: start;
+}
+
+#header-component .header__column--center {
+  justify-self: center;
+}
+
+#header-component .header__column--right {
+  justify-self: end;
+}
+
+#header-component .header-menu .menu-list__link {
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+#header-component .header-menu .menu-list__link--active {
+  background: var(--horizon-violet);
+  color: #ffffff;
+}
+
+#header-component .header-menu .menu-list__link--active .menu-list__link-title {
+  color: #ffffff;
+}
+
+/* Hero styles */
+.template-index .hero {
+  --hero-min-height: 75svh;
+}
+
+.template-index .hero .overlay {
+  --overlay-color: var(--horizon-violet-soft);
+  --overlay-color--end: rgba(108, 59, 245, 0.1);
+}
+
+.template-index .hero .text-block h1,
+.template-index .hero .text-block h2,
+.template-index .hero .text-block h3,
+.template-index .hero .text-block h4 {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.template-index .hero .text-block p,
+.template-index .hero .text-block span,
+.template-index .hero .text-block a {
+  color: #ffffff;
+}
+
+.template-index .hero .button,
+.template-index .hero .button-secondary {
+  border-radius: 999px;
+}
+
+.template-index .hero .button {
+  --button-background-color: var(--horizon-violet);
+  --button-border-color: var(--horizon-violet);
+  --button-color: #ffffff;
+}
+
+.template-index .hero .button:hover {
+  --button-background-color: var(--horizon-violet-dark);
+  --button-border-color: var(--horizon-violet-dark);
+}
+
+.template-index .hero .button-secondary {
+  --button-background-color: rgba(255, 255, 255, 0.16);
+  --button-border-color: rgba(255, 255, 255, 0.6);
+  --button-color: #ffffff;
+}
+
+/* Slideshow controls visibility */
+.template-index slideshow-controls {
+  justify-content: center;
+}
+
+.template-index .slideshow-controls__arrows .slideshow-control,
+.template-index .slideshow-control.button-unstyled {
+  opacity: 1;
+}
+
+.template-index .slideshow-controls__dots {
+  justify-content: center;
+}
