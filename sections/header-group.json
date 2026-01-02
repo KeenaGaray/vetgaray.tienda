@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "Welcome to our store",
+            "text": "<span class=\"topbar-left\">Env\u00edos a todo el pa\u00eds</span><span class=\"topbar-right\">WhatsApp: +54 9 11 1234-5678</span>",
             "link": "",
             "font": "var(--font-subheading--family)",
             "font_size": "0.75rem",
