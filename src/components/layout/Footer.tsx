@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
+import { Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react";
 import logoVetGaray from "@/assets/logo_vet_garay.png";
 
 const footerLinks = {
@@ -41,7 +41,9 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://www.facebook.com/veterinariagaray"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 hover:bg-primary transition-colors"
               >
                 <Facebook className="h-5 w-5" />
@@ -104,15 +106,6 @@ export function Footer() {
                 >
                   <Phone className="h-5 w-5 flex-shrink-0" />
                   <span>+54 9 11 2630-6326</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:info@farmaciaveterinaria.com"
-                  className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors"
-                >
-                  <Mail className="h-5 w-5 flex-shrink-0" />
-                  <span>info@farmaciaveterinaria.com</span>
                 </a>
               </li>
               <li className="flex items-start gap-3 text-background/70">
