@@ -117,9 +117,12 @@ export function Footer() {
                 <MapPin className="h-5 w-5 flex-shrink-0 mt-0.5" />
                 <span>Juan de Garay 2575, Olivos, Argentina</span>
               </li>
-              <li className="flex items-center gap-3 text-background/70">
-                <Clock className="h-5 w-5 flex-shrink-0" />
-                <span>Lun - Sáb: 9:00 - 20:00</span>
+              <li className="flex items-start gap-3 text-background/70">
+                <Clock className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col">
+                  <span>Lun - Vie: 9:00 - 20:00</span>
+                  <span>Sáb y feriados: 10:00 - 14:00</span>
+                </div>
               </li>
             </ul>
           </div>
