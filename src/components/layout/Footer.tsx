@@ -47,7 +47,9 @@ export function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/vetgaray"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 hover:bg-primary transition-colors"
               >
                 <Instagram className="h-5 w-5" />
@@ -95,13 +97,13 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="https://wa.me/5491112345678"
+                  href="https://wa.me/5491126306326"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-background/70 hover:text-primary transition-colors"
                 >
                   <Phone className="h-5 w-5 flex-shrink-0" />
-                  <span>+54 9 11 1234-5678</span>
+                  <span>+54 9 11 2630-6326</span>
                 </a>
               </li>
               <li>
@@ -141,7 +143,7 @@ export function Footer() {
 
       {/* WhatsApp Float Button */}
       <a
-        href="https://wa.me/5491112345678"
+        href="https://wa.me/5491126306326"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-success text-success-foreground shadow-lg hover:scale-110 transition-transform"
