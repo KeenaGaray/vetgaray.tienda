@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
+import { SortSelect, SortOption } from "@/components/products/SortSelect";
 import { Button } from "@/components/ui/button";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { OffersCarousel } from "@/components/home/OffersCarousel";
@@ -45,6 +46,29 @@ const features = [
 export default function Index() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortOption, setSortOption] = useState<SortOption>("alphabetical");
+
+  // Sort products based on selected option
+  const sortedProducts = useMemo(() => {
+    const sorted = [...products];
+    switch (sortOption) {
+      case "alphabetical":
+        return sorted.sort((a, b) => a.node.title.localeCompare(b.node.title));
+      case "price-asc":
+        return sorted.sort((a, b) => 
+          parseFloat(a.node.priceRange.minVariantPrice.amount) - 
+          parseFloat(b.node.priceRange.minVariantPrice.amount)
+        );
+      case "price-desc":
+        return sorted.sort((a, b) => 
+          parseFloat(b.node.priceRange.minVariantPrice.amount) - 
+          parseFloat(a.node.priceRange.minVariantPrice.amount)
+        );
+      case "relevant":
+      default:
+        return sorted;
+    }
+  }, [products, sortOption]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -115,9 +139,17 @@ export default function Index() {
         <div className="container">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-display font-bold">Productos destacados</h2>
-            <Button asChild variant="ghost">
-              <Link to="/coleccion/todos">Ver todos <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:block">
+                <SortSelect value={sortOption} onChange={setSortOption} />
+              </div>
+              <Button asChild variant="ghost">
+                <Link to="/coleccion/todos">Ver todos <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
+            </div>
+          </div>
+          <div className="sm:hidden mb-4">
+            <SortSelect value={sortOption} onChange={setSortOption} />
           </div>
           
           {loading ? (
@@ -130,7 +162,7 @@ export default function Index() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {products.map((product) => (
+              {sortedProducts.map((product) => (
                 <ProductCard key={product.node.id} product={product} />
               ))}
             </div>

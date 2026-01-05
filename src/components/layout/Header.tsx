@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCartStore } from "@/stores/cartStore";
 import { CartDrawer } from "./CartDrawer";
+import { SearchDialog } from "./SearchDialog";
 import logoVetGaray from "@/assets/logo_vet_garay.png";
 
 const navigation = [
@@ -76,6 +77,7 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <SearchDialog />
             <CartDrawer />
 
             {/* Mobile Menu */}
