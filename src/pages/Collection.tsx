@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
+import { SortSelect, SortOption } from "@/components/products/SortSelect";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Loader2, Package, ChevronRight } from "lucide-react";
 
@@ -121,9 +122,32 @@ export default function Collection() {
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>("alphabetical");
 
   const collection = slug ? collections[slug] : collections.todos;
   const currentSubcategories = slug ? subcategories[slug] || [] : [];
+
+  // Sort products based on selected option
+  const sortedProducts = useMemo(() => {
+    const sorted = [...products];
+    switch (sortOption) {
+      case "alphabetical":
+        return sorted.sort((a, b) => a.node.title.localeCompare(b.node.title));
+      case "price-asc":
+        return sorted.sort((a, b) => 
+          parseFloat(a.node.priceRange.minVariantPrice.amount) - 
+          parseFloat(b.node.priceRange.minVariantPrice.amount)
+        );
+      case "price-desc":
+        return sorted.sort((a, b) => 
+          parseFloat(b.node.priceRange.minVariantPrice.amount) - 
+          parseFloat(a.node.priceRange.minVariantPrice.amount)
+        );
+      case "relevant":
+      default:
+        return sorted;
+    }
+  }, [products, sortOption]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -319,11 +343,14 @@ export default function Collection() {
             </div>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground mb-6">
-                {products.length} producto{products.length !== 1 ? "s" : ""}
-              </p>
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm text-muted-foreground">
+                  {sortedProducts.length} producto{sortedProducts.length !== 1 ? "s" : ""}
+                </p>
+                <SortSelect value={sortOption} onChange={setSortOption} />
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                {products.map((product) => (
+                {sortedProducts.map((product) => (
                   <ProductCard key={product.node.id} product={product} />
                 ))}
               </div>
