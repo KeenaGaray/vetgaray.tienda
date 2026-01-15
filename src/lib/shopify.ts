@@ -204,6 +204,104 @@ export const PRODUCT_BY_HANDLE_QUERY = `
   }
 `;
 
+// Collections Query - para obtener todas las colecciones
+export const COLLECTIONS_QUERY = `
+  query GetCollections($first: Int!) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          handle
+          title
+          description
+          image {
+            url
+            altText
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Products by Collection Query - para obtener productos de una colección específica
+export const COLLECTION_PRODUCTS_QUERY = `
+  query GetCollectionProducts($handle: String!, $first: Int!, $after: String) {
+    collectionByHandle(handle: $handle) {
+      id
+      handle
+      title
+      description
+      image {
+        url
+        altText
+      }
+      products(first: $first, after: $after) {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            productType
+            vendor
+            tags
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            compareAtPriceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 5) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
+                  availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
 export const CART_CREATE_MUTATION = `
   mutation cartCreate($input: CartInput!) {
     cartCreate(input: $input) {
@@ -292,6 +390,58 @@ export async function fetchProductByHandle(handle: string) {
   return storefrontApiRequest<{ data: { productByHandle: ShopifyProduct['node'] | null } }>(
     PRODUCT_BY_HANDLE_QUERY, 
     { handle }
+  );
+}
+
+// Types for Collections
+export interface ShopifyCollection {
+  node: {
+    id: string;
+    handle: string;
+    title: string;
+    description: string;
+    image: {
+      url: string;
+      altText: string | null;
+    } | null;
+  };
+}
+
+export interface CollectionProductsResponse {
+  data: {
+    collectionByHandle: {
+      id: string;
+      handle: string;
+      title: string;
+      description: string;
+      image: {
+        url: string;
+        altText: string | null;
+      } | null;
+      products: {
+        edges: ShopifyProduct[];
+        pageInfo: {
+          hasNextPage: boolean;
+          endCursor: string | null;
+        };
+      };
+    } | null;
+  };
+}
+
+// Fetch all Collections
+export async function fetchCollections(first: number = 50) {
+  return storefrontApiRequest<{ data: { collections: { edges: ShopifyCollection[] } } }>(
+    COLLECTIONS_QUERY, 
+    { first }
+  );
+}
+
+// Fetch Products by Collection Handle
+export async function fetchCollectionProducts(handle: string, first: number = 24, after?: string): Promise<CollectionProductsResponse> {
+  return storefrontApiRequest<CollectionProductsResponse>(
+    COLLECTION_PRODUCTS_QUERY, 
+    { handle, first, after }
   );
 }
 
