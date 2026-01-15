@@ -3,20 +3,25 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { SortSelect, SortOption } from "@/components/products/SortSelect";
-import { fetchCollectionProducts, fetchProducts, ShopifyProduct, CollectionProductsResponse } from "@/lib/shopify";
+import { 
+  fetchCollectionProducts, 
+  fetchProducts, 
+  fetchCollections,
+  ShopifyProduct, 
+  ShopifyCollection 
+} from "@/lib/shopify";
 import { Loader2, Package, ChevronRight } from "lucide-react";
 
 // Mapeo de slugs de la web a handles de colecciones en Shopify
-// Podés editar esto para agregar nuevas categorías o cambiar el mapeo
 const COLLECTION_MAPPING: Record<string, {
-  shopifyHandle: string; // El handle de la colección en Shopify
+  shopifyHandle: string;
   fallbackName: string;
   fallbackDescription: string;
   fallbackTagline: string;
   fallbackImage: string;
 }> = {
   farmacia: {
-    shopifyHandle: "farmacia", // Nombre exacto del handle de tu colección en Shopify
+    shopifyHandle: "farmacia",
     fallbackName: "Farmacia Veterinaria",
     fallbackDescription: "Medicamentos veterinarios, antiparasitarios, vitaminas y tratamientos.",
     fallbackTagline: "Salud y bienestar para tu mascota",
@@ -30,7 +35,7 @@ const COLLECTION_MAPPING: Record<string, {
     fallbackImage: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=1920&q=80",
   },
   alimentos: {
-    shopifyHandle: "alimento", // Alias para "alimento"
+    shopifyHandle: "alimento",
     fallbackName: "Alimentos",
     fallbackDescription: "Alimentos balanceados de las mejores marcas para perros y gatos.",
     fallbackTagline: "Nutrición de calidad para una vida saludable",
@@ -65,13 +70,72 @@ const COLLECTION_MAPPING: Record<string, {
     fallbackImage: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80",
   },
   todos: {
-    shopifyHandle: "", // Vacío significa todos los productos
+    shopifyHandle: "",
     fallbackName: "Todos los Productos",
     fallbackDescription: "Explorá nuestro catálogo completo de productos para mascotas.",
     fallbackTagline: "Todo lo que tu mascota necesita en un solo lugar",
     fallbackImage: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1920&q=80",
   },
 };
+
+interface ParsedSubcategory {
+  handle: string;
+  title: string;
+  name: string; // Nombre corto (la parte después del " - ")
+  image: string | null;
+}
+
+// Función para parsear subcategorías desde las colecciones de Shopify
+// Formato esperado: "Categoria - Subcategoria" o "Categoria-Subcategoria"
+function parseSubcategories(
+  collections: ShopifyCollection[], 
+  parentHandle: string
+): ParsedSubcategory[] {
+  const subcategories: ParsedSubcategory[] = [];
+  
+  // Buscar el título de la categoría padre para matchear
+  const parentCollection = collections.find(c => c.node.handle === parentHandle);
+  const parentTitle = parentCollection?.node.title || parentHandle;
+  
+  for (const collection of collections) {
+    const title = collection.node.title;
+    const handle = collection.node.handle;
+    
+    // Ignorar la colección padre
+    if (handle === parentHandle) continue;
+    
+    // Detectar patrones como "Alimentos - MV", "Alimentos-MV", "Farmacia - Antiparasitarios"
+    // Usamos múltiples separadores: " - ", "-", " – " (guión largo)
+    const separators = [' - ', ' – ', '-'];
+    
+    for (const sep of separators) {
+      if (title.includes(sep)) {
+        const parts = title.split(sep);
+        if (parts.length >= 2) {
+          const categoryPart = parts[0].trim().toLowerCase();
+          const subcategoryName = parts.slice(1).join(sep).trim();
+          
+          // Verificar si la primera parte coincide con la categoría padre
+          if (
+            categoryPart === parentTitle.toLowerCase() ||
+            categoryPart === parentHandle.toLowerCase()
+          ) {
+            subcategories.push({
+              handle: handle,
+              title: title,
+              name: subcategoryName,
+              image: collection.node.image?.url || null,
+            });
+            break; // Ya encontramos el match, no seguir con otros separadores
+          }
+        }
+      }
+    }
+  }
+  
+  // Ordenar alfabéticamente por nombre
+  return subcategories.sort((a, b) => a.name.localeCompare(b.name));
+}
 
 export default function Collection() {
   const { slug } = useParams<{ slug: string }>();
@@ -85,10 +149,14 @@ export default function Collection() {
     description: string;
     image: string | null;
   } | null>(null);
+  
+  // Subcategorías detectadas automáticamente
+  const [subcategories, setSubcategories] = useState<ParsedSubcategory[]>([]);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
 
   const mapping = slug ? COLLECTION_MAPPING[slug] : COLLECTION_MAPPING.todos;
 
-  // Sort products based on selected option
+  // Sort products
   const sortedProducts = useMemo(() => {
     const sorted = [...products];
     switch (sortOption) {
@@ -110,6 +178,30 @@ export default function Collection() {
     }
   }, [products, sortOption]);
 
+  // Cargar subcategorías al cambiar de categoría
+  useEffect(() => {
+    async function loadSubcategories() {
+      if (!mapping?.shopifyHandle) {
+        setSubcategories([]);
+        return;
+      }
+      
+      try {
+        const response = await fetchCollections(100);
+        const allCollections = response.data.collections.edges;
+        const parsed = parseSubcategories(allCollections, mapping.shopifyHandle);
+        setSubcategories(parsed);
+      } catch (error) {
+        console.error("Error loading subcategories:", error);
+        setSubcategories([]);
+      }
+    }
+    
+    loadSubcategories();
+    setActiveSubcategory(null); // Reset al cambiar de categoría
+  }, [slug, mapping?.shopifyHandle]);
+
+  // Cargar productos
   useEffect(() => {
     async function loadProducts() {
       setLoading(true);
@@ -119,9 +211,11 @@ export default function Collection() {
           return;
         }
 
-        // Si hay un handle de Shopify, usar la API de colecciones
-        if (mapping.shopifyHandle) {
-          const response = await fetchCollectionProducts(mapping.shopifyHandle, 24);
+        // Determinar qué colección cargar
+        const collectionHandle = activeSubcategory || mapping.shopifyHandle;
+
+        if (collectionHandle) {
+          const response = await fetchCollectionProducts(collectionHandle, 24);
           
           if (response.data.collectionByHandle) {
             const collection = response.data.collectionByHandle;
@@ -129,14 +223,14 @@ export default function Collection() {
             setHasMore(collection.products.pageInfo.hasNextPage);
             setCursor(collection.products.pageInfo.endCursor);
             
-            // Usar la info de la colección de Shopify
             setCollectionInfo({
-              title: collection.title,
+              title: activeSubcategory 
+                ? subcategories.find(s => s.handle === activeSubcategory)?.name || collection.title
+                : collection.title,
               description: collection.description || mapping.fallbackDescription,
               image: collection.image?.url || null,
             });
           } else {
-            // Colección no encontrada en Shopify
             setProducts([]);
             setCollectionInfo(null);
           }
@@ -156,13 +250,15 @@ export default function Collection() {
       }
     }
     loadProducts();
-  }, [slug, mapping]);
+  }, [slug, mapping, activeSubcategory, subcategories]);
 
   const loadMore = async () => {
     if (!cursor || !mapping) return;
+    const collectionHandle = activeSubcategory || mapping.shopifyHandle;
+    
     try {
-      if (mapping.shopifyHandle) {
-        const response = await fetchCollectionProducts(mapping.shopifyHandle, 24, cursor);
+      if (collectionHandle) {
+        const response = await fetchCollectionProducts(collectionHandle, 24, cursor);
         if (response.data.collectionByHandle) {
           setProducts((prev) => [...prev, ...response.data.collectionByHandle!.products.edges]);
           setHasMore(response.data.collectionByHandle.products.pageInfo.hasNextPage);
@@ -192,7 +288,9 @@ export default function Collection() {
     );
   }
 
-  const displayTitle = collectionInfo?.title || mapping.fallbackName;
+  const displayTitle = activeSubcategory 
+    ? subcategories.find(s => s.handle === activeSubcategory)?.name || collectionInfo?.title 
+    : (collectionInfo?.title || mapping.fallbackName);
   const displayDescription = collectionInfo?.description || mapping.fallbackDescription;
   const displayImage = collectionInfo?.image || mapping.fallbackImage;
 
@@ -202,10 +300,9 @@ export default function Collection() {
       <section className="relative h-48 md:h-64 overflow-hidden bg-muted">
         <img
           src={displayImage}
-          alt={displayTitle}
+          alt={displayTitle || mapping.fallbackName}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
         
         {/* Breadcrumb */}
@@ -216,7 +313,20 @@ export default function Collection() {
                 Inicio
               </Link>
               <ChevronRight className="h-4 w-4" />
-              <span className="text-white font-medium">{displayTitle}</span>
+              {activeSubcategory ? (
+                <>
+                  <button 
+                    onClick={() => setActiveSubcategory(null)}
+                    className="hover:text-white transition-colors"
+                  >
+                    {mapping.fallbackName}
+                  </button>
+                  <ChevronRight className="h-4 w-4" />
+                  <span className="text-white font-medium">{displayTitle}</span>
+                </>
+              ) : (
+                <span className="text-white font-medium">{displayTitle}</span>
+              )}
             </nav>
           </div>
         </div>
@@ -229,7 +339,7 @@ export default function Collection() {
                 {mapping.fallbackTagline}
               </p>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white drop-shadow-lg mb-2">
-                {displayTitle}
+                {activeSubcategory ? `${mapping.fallbackName} - ${displayTitle}` : displayTitle}
               </h1>
               <p className="text-white/90 text-sm md:text-base max-w-md">
                 {displayDescription}
@@ -238,6 +348,70 @@ export default function Collection() {
           </div>
         </div>
       </section>
+
+      {/* Subcategories - Solo mostrar si hay subcategorías detectadas */}
+      {subcategories.length > 0 && (
+        <section className="py-6 bg-muted/30 border-b border-border">
+          <div className="container">
+            <div className="flex justify-center gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+              {/* Botón "Todos" */}
+              <button
+                onClick={() => setActiveSubcategory(null)}
+                className="flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group"
+              >
+                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                  activeSubcategory === null 
+                    ? 'border-primary ring-2 ring-primary/30' 
+                    : 'border-border group-hover:border-primary/50'
+                }`}>
+                  <div className="w-full h-full bg-primary flex items-center justify-center">
+                    <Package className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                </div>
+                <span className={`text-xs md:text-sm font-medium text-center ${
+                  activeSubcategory === null ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                }`}>
+                  Todos
+                </span>
+              </button>
+
+              {/* Subcategorías detectadas de Shopify */}
+              {subcategories.map((sub) => (
+                <button
+                  key={sub.handle}
+                  onClick={() => setActiveSubcategory(sub.handle)}
+                  className="flex flex-col items-center gap-2 min-w-[70px] md:min-w-[80px] group"
+                >
+                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 transition-all ${
+                    activeSubcategory === sub.handle 
+                      ? 'border-primary ring-2 ring-primary/30' 
+                      : 'border-border group-hover:border-primary/50'
+                  }`}>
+                    {sub.image ? (
+                      <img
+                        src={sub.image}
+                        alt={sub.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <span className="text-lg font-bold text-muted-foreground">
+                          {sub.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span className={`text-xs md:text-sm font-medium text-center max-w-[80px] truncate ${
+                    activeSubcategory === sub.handle ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                  }`}>
+                    {sub.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Products Grid */}
       <section className="py-8 pb-16">
@@ -251,7 +425,7 @@ export default function Collection() {
               <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">No hay productos en esta categoría</h2>
               <p className="text-muted-foreground mb-4">
-                Asegurate de que tu colección "<strong>{mapping.shopifyHandle || 'todos'}</strong>" exista en Shopify 
+                Asegurate de que tu colección "<strong>{activeSubcategory || mapping.shopifyHandle || 'todos'}</strong>" exista en Shopify 
                 y tenga productos asignados.
               </p>
               <Link to="/" className="text-primary hover:underline">
@@ -292,22 +466,23 @@ export default function Collection() {
           <div className="bg-muted/50 rounded-xl p-6 border border-border">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
-              ¿Cómo administrar esta categoría?
+              ¿Cómo agregar subcategorías?
             </h3>
-            <p className="text-sm text-muted-foreground">
-              Los productos de esta página se sincronizan automáticamente con tu colección 
-              "<strong>{mapping.shopifyHandle || 'todos los productos'}</strong>" de Shopify. 
-              Para agregar o quitar productos, andá a tu{" "}
-              <a 
-                href="https://admin.shopify.com/store/k0ib9b-b0/collections" 
+            <p className="text-sm text-muted-foreground mb-3">
+              Las subcategorías se detectan automáticamente desde Shopify. Para crear una nueva:
+            </p>
+            <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-1">
+              <li>Andá a tu <a 
+                href="https://admin.shopify.com/store/k0ib9b-b0/collections/new" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
-              >
-                panel de Shopify → Colecciones
-              </a>{" "}
-              y asigná los productos que quieras mostrar acá.
-            </p>
+              >panel de Shopify → Crear colección</a></li>
+              <li>Nombrala con el formato: <strong>"{mapping.fallbackName} - NombreSubcategoría"</strong></li>
+              <li>Ejemplo: "{mapping.fallbackName} - Premium" o "{mapping.fallbackName} - Cachorros"</li>
+              <li>Asigná productos a esa colección</li>
+              <li>¡Listo! La subcategoría aparecerá automáticamente acá</li>
+            </ol>
           </div>
         </div>
       </section>
