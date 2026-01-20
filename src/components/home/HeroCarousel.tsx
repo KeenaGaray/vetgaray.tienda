@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface HeroSlide {
   id: string;
@@ -137,37 +136,17 @@ export function HeroCarousel({ slides = defaultSlides, autoplayDelay = 5000 }: H
         </div>
       </div>
 
-      {/* Navigation Arrows */}
-      {slides.length > 1 && (
-        <>
-          <button
-            onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground flex items-center justify-center hover:bg-background/30 transition-colors"
-            aria-label="Anterior"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground flex items-center justify-center hover:bg-background/30 transition-colors"
-            aria-label="Siguiente"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-        </>
-      )}
-
       {/* Dots */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => scrollTo(index)}
-              className={`h-2 rounded-full transition-all ${
+              className={`rounded-full transition-all ${
                 index === selectedIndex
-                  ? "w-8 bg-primary-foreground"
-                  : "w-2 bg-primary-foreground/50 hover:bg-primary-foreground/70"
+                  ? "w-10 h-3 bg-white"
+                  : "w-3 h-3 bg-white/50 hover:bg-white/70"
               }`}
               aria-label={`Ir a slide ${index + 1}`}
             />
