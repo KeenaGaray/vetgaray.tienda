@@ -140,7 +140,7 @@ export function Header() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="hidden md:flex flex-col items-center justify-center h-auto py-1 px-3 gap-0.5">
               <User className="h-5 w-5" />
               <span className="text-xs">Ingresar</span>
