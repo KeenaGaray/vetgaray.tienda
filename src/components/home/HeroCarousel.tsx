@@ -87,7 +87,7 @@ export function HeroCarousel({ slides = defaultSlides, autoplayDelay = 5000 }: H
   }, [emblaApi, autoplayDelay]);
 
   return (
-    <section className="relative overflow-hidden px-3 sm:px-4 lg:px-6 2xl:px-8">
+    <section className="relative overflow-hidden px-4 sm:px-5 lg:px-8 2xl:px-10">
       <div ref={emblaRef} className="overflow-hidden rounded-xl">
         <div className="flex">
           {slides.map((slide) => (
