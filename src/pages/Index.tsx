@@ -92,12 +92,12 @@ export default function Index() {
       {/* Categories */}
       <section className="py-12 md:py-16">
         <div className="container">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-3">
-            Explorá por categoría
-          </h2>
-          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
-            Encontrá todo lo que tu mascota necesita en nuestras categorías especializadas
-          </p>
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="font-display font-extrabold text-foreground">Comprá por</h2>
+            <div className="flex bg-muted rounded-full p-1">
+              <Button size="sm" className="rounded-full font-bold">Todas las categorías</Button>
+            </div>
+          </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {categories.map((cat) => (
               <Link
@@ -135,23 +135,17 @@ export default function Index() {
       <OffersCarousel />
 
       {/* Products */}
-      <section className="py-12 md:py-16 bg-muted/50">
+      <section className="py-12 md:py-16 bg-muted/30">
         <div className="container">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-display font-bold">Productos destacados</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <h2 className="font-display font-extrabold text-foreground">Productos destacados</h2>
             <div className="flex items-center gap-4">
-              <div className="hidden sm:block">
-                <SortSelect value={sortOption} onChange={setSortOption} />
-              </div>
-              <Button asChild variant="ghost">
+              <SortSelect value={sortOption} onChange={setSortOption} />
+              <Button asChild className="font-bold">
                 <Link to="/coleccion/todos">Ver todos <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
           </div>
-          <div className="sm:hidden mb-4">
-            <SortSelect value={sortOption} onChange={setSortOption} />
-          </div>
-          
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
