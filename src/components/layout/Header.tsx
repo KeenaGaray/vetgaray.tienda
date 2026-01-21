@@ -204,33 +204,6 @@ export function Header() {
           </div>
         </div>
       </div>
-
-      {/* Navigation Bar */}
-      <div className="border-t border-border bg-background">
-        <div className="container">
-          <nav className="flex items-center justify-center gap-6 py-2">
-            {/* Quick Links - Centered */}
-            <Link
-              to="/coleccion/ofertas"
-              className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Ofertas
-            </Link>
-            <Link
-              to="/nosotros"
-              className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors hidden md:inline-block"
-            >
-              Nosotros
-            </Link>
-            <Link
-              to="/contacto"
-              className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors hidden md:inline-block"
-            >
-              Contacto
-            </Link>
-          </nav>
-        </div>
-      </div>
     </header>
   );
 }
