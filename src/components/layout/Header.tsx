@@ -87,7 +87,62 @@ export function Header() {
 
       {/* Main Header */}
       <div className="container">
-        <div className="flex items-center gap-4 py-4">
+        <div className="flex items-center justify-center gap-4 py-4">
+          {/* Sidebar Toggle - Far Left */}
+          <Sheet open={categoryMenuOpen} onOpenChange={setCategoryMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="flex-shrink-0">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-80 p-0">
+              <SheetHeader className="p-4 border-b border-border">
+                <SheetTitle className="font-display text-xl">Categorías</SheetTitle>
+              </SheetHeader>
+              <div className="py-2">
+                {loadingCategories ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleCategoryClick("todos")}
+                      className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-xl">🛒</span>
+                      </div>
+                      <span className="flex-1 font-medium text-left">Todos los productos</span>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    </button>
+                    {categories.map((category) => (
+                      <button
+                        key={category.node.id}
+                        onClick={() => handleCategoryClick(category.node.handle)}
+                        className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
+                      >
+                        <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                          {category.node.image ? (
+                            <img
+                              src={category.node.image.url}
+                              alt={category.node.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-xl">📦</span>
+                          )}
+                        </div>
+                        <span className="flex-1 font-medium text-left">{category.node.title}</span>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                      </button>
+                    ))}
+                  </>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
+
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
             <img src={logoVetGaray} alt="Vet Garay" className="h-10 w-10 md:h-12 md:w-12 rounded-xl object-contain" />
@@ -153,64 +208,8 @@ export function Header() {
       {/* Navigation Bar */}
       <div className="border-t border-border bg-background">
         <div className="container">
-          <nav className="flex items-center gap-1 py-2">
-            {/* Shop Button - Opens Category Sidebar */}
-            <Sheet open={categoryMenuOpen} onOpenChange={setCategoryMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="gap-2 font-semibold text-foreground">
-                  <Menu className="h-5 w-5" />
-                  Tienda
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-80 p-0">
-                <SheetHeader className="p-4 border-b border-border">
-                  <SheetTitle className="font-display text-xl">Categorías</SheetTitle>
-                </SheetHeader>
-                <div className="py-2">
-                  {loadingCategories ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => handleCategoryClick("todos")}
-                        className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
-                      >
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xl">🛒</span>
-                        </div>
-                        <span className="flex-1 font-medium text-left">Todos los productos</span>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </button>
-                      {categories.map((category) => (
-                        <button
-                          key={category.node.id}
-                          onClick={() => handleCategoryClick(category.node.handle)}
-                          className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
-                        >
-                          <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex items-center justify-center">
-                            {category.node.image ? (
-                              <img
-                                src={category.node.image.url}
-                                alt={category.node.title}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-xl">📦</span>
-                            )}
-                          </div>
-                          <span className="flex-1 font-medium text-left">{category.node.title}</span>
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        </button>
-                      ))}
-                    </>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-
-            {/* Quick Links */}
+          <nav className="flex items-center justify-center gap-6 py-2">
+            {/* Quick Links - Centered */}
             <Link
               to="/coleccion/ofertas"
               className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
