@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, User, Menu, ChevronRight, X } from "lucide-react";
+import { Search, User, Menu, ChevronRight, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CartDrawer } from "./CartDrawer";
 import logoVetGaray from "@/assets/logo_vet_garay.png";
 import { fetchCollections, fetchProducts, ShopifyCollection, ShopifyProduct } from "@/lib/shopify";
-import { Loader2 } from "lucide-react";
 
 export function Header() {
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
@@ -89,17 +88,30 @@ export function Header() {
       <div className="container">
         <div className="flex items-center justify-center gap-4 py-4">
           {/* Sidebar Toggle - Far Left */}
-          <Sheet open={categoryMenuOpen} onOpenChange={setCategoryMenuOpen}>
-            <SheetTrigger asChild>
+          <Popover open={categoryMenuOpen} onOpenChange={setCategoryMenuOpen}>
+            <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="flex-shrink-0">
                 <Menu className="h-6 w-6" />
               </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80 p-0">
-              <SheetHeader className="p-4 border-b border-border">
-                <SheetTitle className="font-display text-xl">Categorías</SheetTitle>
-              </SheetHeader>
-              <div className="py-2">
+            </PopoverTrigger>
+            <PopoverContent 
+              side="bottom" 
+              align="start" 
+              sideOffset={8}
+              className="w-80 p-0 rounded-2xl shadow-xl bg-card border border-border"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 className="font-display text-xl font-semibold">Categorías</h2>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 rounded-full"
+                  onClick={() => setCategoryMenuOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="py-2 max-h-[60vh] overflow-y-auto">
                 {loadingCategories ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -110,8 +122,8 @@ export function Header() {
                       onClick={() => handleCategoryClick("todos")}
                       className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
                     >
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-xl">🛒</span>
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-lg">🛒</span>
                       </div>
                       <span className="flex-1 font-medium text-left">Todos los productos</span>
                       <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -122,7 +134,7 @@ export function Header() {
                         onClick={() => handleCategoryClick(category.node.handle)}
                         className="w-full flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors"
                       >
-                        <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center">
                           {category.node.image ? (
                             <img
                               src={category.node.image.url}
@@ -130,7 +142,7 @@ export function Header() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <span className="text-xl">📦</span>
+                            <span className="text-lg">📦</span>
                           )}
                         </div>
                         <span className="flex-1 font-medium text-left">{category.node.title}</span>
@@ -140,8 +152,8 @@ export function Header() {
                   </>
                 )}
               </div>
-            </SheetContent>
-          </Sheet>
+            </PopoverContent>
+          </Popover>
 
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
