@@ -28,8 +28,8 @@ export function OffersCarousel() {
 
   if (loading) {
     return (
-      <section className="py-10 md:py-12">
-        <div className="container">
+      <section className="py-10 md:py-12 px-4 sm:px-5 lg:px-8 2xl:px-10">
+        <div>
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
@@ -45,8 +45,8 @@ export function OffersCarousel() {
   const loopProducts = [...products, ...products];
 
   return (
-    <section className="py-10 md:py-12">
-      <div className="container">
+    <section className="py-10 md:py-12 px-4 sm:px-5 lg:px-8 2xl:px-10">
+      <div>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="bg-accent p-2 rounded-lg">

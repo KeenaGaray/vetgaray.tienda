@@ -90,8 +90,8 @@ export default function Index() {
       <HeroCarousel />
 
       {/* Categories */}
-      <section className="py-12 md:py-16">
-        <div className="container">
+      <section className="py-12 md:py-16 px-4 sm:px-5 lg:px-8 2xl:px-10">
+        <div>
           <div className="flex items-center gap-4 mb-8">
             <h2 className="font-display font-extrabold text-foreground">Comprá por</h2>
             <div className="flex bg-muted rounded-full p-1">
@@ -135,8 +135,8 @@ export default function Index() {
       <OffersCarousel />
 
       {/* Products */}
-      <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container">
+      <section className="py-12 md:py-16 bg-muted/30 px-4 sm:px-5 lg:px-8 2xl:px-10">
+        <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <h2 className="font-display font-extrabold text-foreground">Productos destacados</h2>
             <div className="flex items-center gap-4">
@@ -165,8 +165,8 @@ export default function Index() {
       </section>
 
       {/* Features */}
-      <section className="py-12 md:py-16">
-        <div className="container">
+      <section className="py-12 md:py-16 px-4 sm:px-5 lg:px-8 2xl:px-10">
+        <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature) => (
               <div key={feature.title} className="text-center">
