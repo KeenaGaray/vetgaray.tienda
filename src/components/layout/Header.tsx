@@ -170,11 +170,11 @@ export function Header() {
 
       {/* Sliding Category Panel - "Solapa" style */}
       <div 
-        className={`fixed left-0 top-24 z-[70] transition-transform duration-300 ease-out ${
-          categoryMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed left-4 top-32 bottom-4 z-[70] transition-transform duration-300 ease-out ${
+          categoryMenuOpen ? 'translate-x-0' : '-translate-x-[calc(100%+1rem)]'
         }`}
       >
-        <div className="bg-card w-72 rounded-r-2xl shadow-2xl border border-border border-l-0 overflow-hidden">
+        <div className="bg-card w-72 h-full rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
             <h2 className="font-display text-lg font-semibold">Categorías</h2>
@@ -189,7 +189,7 @@ export function Header() {
           </div>
           
           {/* Categories List */}
-          <div className="py-2 max-h-[60vh] overflow-y-auto">
+          <div className="py-2 flex-1 overflow-y-auto">
             {loadingCategories ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
