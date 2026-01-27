@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, User, Menu, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -15,8 +15,6 @@ export function Header() {
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
-
-  // Search products with debounce
 
   // Search products with debounce
   const searchProducts = useCallback(async (query: string) => {
