@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, User, Menu, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
