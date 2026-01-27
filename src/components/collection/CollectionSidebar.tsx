@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, Loader2, Package } from "lucide-react";
 import { 
-  fetchCollections, 
+  fetchAllCollections,
   ShopifyCollection 
 } from "@/lib/shopify";
 import { 
@@ -130,9 +130,9 @@ export function CollectionSidebar({
   useEffect(() => {
     async function loadCollections() {
       try {
-        const response = await fetchCollections(100);
-        setCollections(response.data.collections.edges);
-        const builtTree = buildCollectionTree(response.data.collections.edges);
+        const all = await fetchAllCollections();
+        setCollections(all);
+        const builtTree = buildCollectionTree(all);
         setTree(builtTree);
         
         // Auto-expandir la categoría actual y sus ancestros
