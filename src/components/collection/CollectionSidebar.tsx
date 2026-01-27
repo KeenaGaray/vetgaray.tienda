@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, Loader2, Package } from "lucide-react";
 import { 
   fetchCollections, 
