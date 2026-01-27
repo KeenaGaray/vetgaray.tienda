@@ -1,40 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, User, Menu, ChevronRight, X, Loader2 } from "lucide-react";
+import { Search, User, Menu, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./CartDrawer";
+import { CategorySidebar } from "./CategorySidebar";
 import logoVetGaray from "@/assets/logo_vet_garay.png";
-import { fetchCollections, fetchProducts, ShopifyCollection, ShopifyProduct } from "@/lib/shopify";
+import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 
 export function Header() {
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
-  const [categories, setCategories] = useState<ShopifyCollection[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ShopifyProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
 
-  // Load categories from Shopify
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const response = await fetchCollections(50);
-        // Filter only main categories (no " - " in title)
-        const mainCategories = response.data.collections.edges.filter(
-          (col) => !col.node.title.includes(" - ")
-        );
-        setCategories(mainCategories);
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      } finally {
-        setLoadingCategories(false);
-      }
-    }
-    loadCategories();
-  }, []);
+  // Search products with debounce
 
   // Search products with debounce
   const searchProducts = useCallback(async (query: string) => {
@@ -67,11 +49,6 @@ export function Header() {
     setShowResults(false);
     setSearchQuery("");
     navigate(`/producto/${handle}`);
-  };
-
-  const handleCategoryClick = (handle: string) => {
-    setCategoryMenuOpen(false);
-    navigate(`/coleccion/${handle}`);
   };
 
   return (
@@ -160,78 +137,11 @@ export function Header() {
         </div>
       </header>
 
-      {/* Overlay */}
-      {categoryMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 z-[60] transition-opacity duration-300"
-          onClick={() => setCategoryMenuOpen(false)}
-        />
-      )}
-
-      {/* Sliding Category Panel - "Solapa" style */}
-      <div 
-        className={`fixed left-4 top-32 bottom-4 z-[70] transition-transform duration-300 ease-out ${
-          categoryMenuOpen ? 'translate-x-0' : '-translate-x-[calc(100%+1rem)]'
-        }`}
-      >
-        <div className="bg-card w-72 h-full rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
-            <h2 className="font-display text-lg font-semibold">Categorías</h2>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 rounded-full hover:bg-muted"
-              onClick={() => setCategoryMenuOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          {/* Categories List */}
-          <div className="py-2 flex-1 overflow-y-auto">
-            {loadingCategories ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={() => handleCategoryClick("todos")}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors"
-                >
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-base">🛒</span>
-                  </div>
-                  <span className="flex-1 font-medium text-left text-sm">Todos los productos</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </button>
-                {categories.map((category) => (
-                  <button
-                    key={category.node.id}
-                    onClick={() => handleCategoryClick(category.node.handle)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-muted overflow-hidden flex items-center justify-center">
-                      {category.node.image ? (
-                        <img
-                          src={category.node.image.url}
-                          alt={category.node.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-base">📦</span>
-                      )}
-                    </div>
-                    <span className="flex-1 font-medium text-left text-sm">{category.node.title}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                ))}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
+      {/* Category Sidebar with hierarchy */}
+      <CategorySidebar 
+        isOpen={categoryMenuOpen} 
+        onClose={() => setCategoryMenuOpen(false)} 
+      />
     </>
   );
 }
