@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/products/ProductCard";
 import { SortSelect, SortOption } from "@/components/products/SortSelect";
+import { CollectionSidebar } from "@/components/collection/CollectionSidebar";
 import { 
   fetchCollectionProducts, 
   fetchProducts, 
@@ -10,7 +11,14 @@ import {
   ShopifyProduct, 
   ShopifyCollection 
 } from "@/lib/shopify";
-import { Loader2, Package, ChevronRight } from "lucide-react";
+import { 
+  buildCollectionTree, 
+  findNodeWithAncestors,
+  CollectionNode 
+} from "@/lib/collectionHierarchy";
+import { Loader2, Package, ChevronRight, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Mapeo de slugs de la web a handles de colecciones en Shopify
 const COLLECTION_MAPPING: Record<string, {
@@ -81,69 +89,41 @@ const COLLECTION_MAPPING: Record<string, {
 interface ParsedSubcategory {
   handle: string;
   title: string;
-  name: string; // Nombre corto (la parte después del " - ")
+  name: string;
   image: string | null;
+  children: ParsedSubcategory[];
 }
 
-// Función para parsear subcategorías desde las colecciones de Shopify
-// Formato esperado: "Categoria - Subcategoria" o "Categoria-Subcategoria"
-function parseSubcategories(
+// Función para obtener subcategorías usando el nuevo sistema jerárquico
+function getSubcategoriesFromTree(
   collections: ShopifyCollection[], 
   parentHandle: string
 ): ParsedSubcategory[] {
-  const subcategories: ParsedSubcategory[] = [];
+  const tree = buildCollectionTree(collections);
+  const parent = tree.flat.get(parentHandle);
   
-  // Buscar el título de la categoría padre para matchear
-  const parentCollection = collections.find(c => c.node.handle === parentHandle);
-  const parentTitle = parentCollection?.node.title || parentHandle;
+  if (!parent) return [];
   
-  for (const collection of collections) {
-    const title = collection.node.title;
-    const handle = collection.node.handle;
-    
-    // Ignorar la colección padre
-    if (handle === parentHandle) continue;
-    
-    // Detectar patrones como "Alimentos - MV", "Alimentos-MV", "Farmacia - Antiparasitarios"
-    // Usamos múltiples separadores: " - ", "-", " – " (guión largo)
-    const separators = [' - ', ' – ', '-'];
-    
-    for (const sep of separators) {
-      if (title.includes(sep)) {
-        const parts = title.split(sep);
-        if (parts.length >= 2) {
-          const categoryPart = parts[0].trim().toLowerCase();
-          const subcategoryName = parts.slice(1).join(sep).trim();
-          
-          // Verificar si la primera parte coincide con la categoría padre
-          if (
-            categoryPart === parentTitle.toLowerCase() ||
-            categoryPart === parentHandle.toLowerCase()
-          ) {
-            subcategories.push({
-              handle: handle,
-              title: title,
-              name: subcategoryName,
-              image: collection.node.image?.url || null,
-            });
-            break; // Ya encontramos el match, no seguir con otros separadores
-          }
-        }
-      }
-    }
-  }
+  const mapNodeToSubcategory = (node: CollectionNode): ParsedSubcategory => ({
+    handle: node.handle,
+    title: node.title,
+    name: node.shortName,
+    image: node.image,
+    children: node.children.map(mapNodeToSubcategory),
+  });
   
-  // Ordenar alfabéticamente por nombre
-  return subcategories.sort((a, b) => a.name.localeCompare(b.name));
+  return parent.children.map(mapNodeToSubcategory);
 }
 
 export default function Collection() {
   const { slug } = useParams<{ slug: string }>();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [allCollections, setAllCollections] = useState<ShopifyCollection[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>("alphabetical");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collectionInfo, setCollectionInfo] = useState<{
     title: string;
     description: string;
@@ -188,8 +168,9 @@ export default function Collection() {
       
       try {
         const response = await fetchCollections(100);
-        const allCollections = response.data.collections.edges;
-        const parsed = parseSubcategories(allCollections, mapping.shopifyHandle);
+        const collections = response.data.collections.edges;
+        setAllCollections(collections);
+        const parsed = getSubcategoriesFromTree(collections, mapping.shopifyHandle);
         setSubcategories(parsed);
       } catch (error) {
         console.error("Error loading subcategories:", error);
@@ -200,6 +181,11 @@ export default function Collection() {
     loadSubcategories();
     setActiveSubcategory(null); // Reset al cambiar de categoría
   }, [slug, mapping?.shopifyHandle]);
+
+  // Verificar si hay subcategorías anidadas (profundidad > 1)
+  const hasNestedSubcategories = useMemo(() => {
+    return subcategories.some(sub => sub.children && sub.children.length > 0);
+  }, [subcategories]);
 
   // Cargar productos
   useEffect(() => {
@@ -413,50 +399,106 @@ export default function Collection() {
         </section>
       )}
 
-      {/* Products Grid */}
+      {/* Products Grid with Sidebar */}
       <section className="py-8 pb-16">
         <div className="container">
-          {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : products.length === 0 ? (
-            <div className="text-center py-16 bg-muted/30 rounded-xl">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">No hay productos en esta categoría</h2>
-              <p className="text-muted-foreground mb-4">
-                Asegurate de que tu colección "<strong>{activeSubcategory || mapping.shopifyHandle || 'todos'}</strong>" exista en Shopify 
-                y tenga productos asignados.
-              </p>
-              <Link to="/" className="text-primary hover:underline">
-                Ver todos los productos
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-sm text-muted-foreground">
-                  {sortedProducts.length} producto{sortedProducts.length !== 1 ? "s" : ""}
-                </p>
-                <SortSelect value={sortOption} onChange={setSortOption} />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                {sortedProducts.map((product) => (
-                  <ProductCard key={product.node.id} product={product} />
-                ))}
-              </div>
-              {hasMore && (
-                <div className="text-center mt-8">
-                  <button
-                    onClick={loadMore}
-                    className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
-                  >
-                    Cargar más productos
-                  </button>
+          <div className="flex gap-6">
+            {/* Sidebar de subcategorías - Solo en desktop y si hay subcategorías */}
+            {subcategories.length > 0 && (
+              <div className="hidden lg:block w-64 flex-shrink-0">
+                <div className="sticky top-24">
+                  <CollectionSidebar 
+                    currentHandle={mapping.shopifyHandle}
+                    activeSubcategory={activeSubcategory}
+                    onSubcategorySelect={setActiveSubcategory}
+                  />
                 </div>
+              </div>
+            )}
+
+            {/* Mobile sidebar toggle */}
+            {subcategories.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="lg:hidden fixed bottom-20 left-4 z-40 shadow-lg"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X className="h-4 w-4 mr-2" /> : <Menu className="h-4 w-4 mr-2" />}
+                Filtrar
+              </Button>
+            )}
+
+            {/* Mobile sidebar overlay */}
+            {sidebarOpen && subcategories.length > 0 && (
+              <>
+                <div 
+                  className="lg:hidden fixed inset-0 bg-black/40 z-40"
+                  onClick={() => setSidebarOpen(false)}
+                />
+                <div className="lg:hidden fixed left-4 bottom-32 z-50 w-72">
+                  <CollectionSidebar 
+                    currentHandle={mapping.shopifyHandle}
+                    activeSubcategory={activeSubcategory}
+                    onSubcategorySelect={(handle) => {
+                      setActiveSubcategory(handle);
+                      setSidebarOpen(false);
+                    }}
+                  />
+                </div>
+              </>
+            )}
+            
+            {/* Products */}
+            <div className="flex-1">
+              {loading ? (
+                <div className="flex items-center justify-center py-16">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : products.length === 0 ? (
+                <div className="text-center py-16 bg-muted/30 rounded-xl">
+                  <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h2 className="text-xl font-semibold mb-2">No hay productos en esta categoría</h2>
+                  <p className="text-muted-foreground mb-4">
+                    Asegurate de que tu colección "<strong>{activeSubcategory || mapping.shopifyHandle || 'todos'}</strong>" exista en Shopify 
+                    y tenga productos asignados.
+                  </p>
+                  <Link to="/" className="text-primary hover:underline">
+                    Ver todos los productos
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <p className="text-sm text-muted-foreground">
+                      {sortedProducts.length} producto{sortedProducts.length !== 1 ? "s" : ""}
+                    </p>
+                    <SortSelect value={sortOption} onChange={setSortOption} />
+                  </div>
+                  <div className={cn(
+                    "grid gap-4 md:gap-6",
+                    subcategories.length > 0 
+                      ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3" 
+                      : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  )}>
+                    {sortedProducts.map((product) => (
+                      <ProductCard key={product.node.id} product={product} />
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={loadMore}
+                        className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                      >
+                        Cargar más productos
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </section>
 
