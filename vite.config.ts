@@ -14,5 +14,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    // Prevent "Invalid hook call" issues caused by multiple React copies.
+    // This can surface as: "Cannot read properties of null (reading 'useEffect')".
+    dedupe: ["react", "react-dom"],
   },
 }));
