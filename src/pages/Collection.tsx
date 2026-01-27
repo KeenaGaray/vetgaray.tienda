@@ -7,7 +7,7 @@ import { CollectionSidebar } from "@/components/collection/CollectionSidebar";
 import { 
   fetchCollectionProducts, 
   fetchProducts, 
-  fetchCollections,
+  fetchAllCollections,
   ShopifyProduct, 
   ShopifyCollection 
 } from "@/lib/shopify";
@@ -167,8 +167,7 @@ export default function Collection() {
       }
       
       try {
-        const response = await fetchCollections(100);
-        const collections = response.data.collections.edges;
+        const collections = await fetchAllCollections();
         setAllCollections(collections);
         const parsed = getSubcategoriesFromTree(collections, mapping.shopifyHandle);
         setSubcategories(parsed);

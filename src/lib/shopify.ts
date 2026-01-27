@@ -206,8 +206,8 @@ export const PRODUCT_BY_HANDLE_QUERY = `
 
 // Collections Query - para obtener todas las colecciones
 export const COLLECTIONS_QUERY = `
-  query GetCollections($first: Int!) {
-    collections(first: $first) {
+  query GetCollections($first: Int!, $after: String) {
+    collections(first: $first, after: $after) {
       edges {
         node {
           id
@@ -219,6 +219,10 @@ export const COLLECTIONS_QUERY = `
             altText
           }
         }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -350,6 +354,8 @@ export const CART_CREATE_MUTATION = `
 export async function storefrontApiRequest<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
     method: 'POST',
+    // Avoid stale storefront responses when updating collections/categories in Shopify.
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
@@ -430,11 +436,41 @@ export interface CollectionProductsResponse {
 }
 
 // Fetch all Collections
-export async function fetchCollections(first: number = 50) {
-  return storefrontApiRequest<{ data: { collections: { edges: ShopifyCollection[] } } }>(
-    COLLECTIONS_QUERY, 
-    { first }
-  );
+export async function fetchCollections(first: number = 50, after?: string) {
+  return storefrontApiRequest<{
+    data: {
+      collections: {
+        edges: ShopifyCollection[];
+        pageInfo: {
+          hasNextPage: boolean;
+          endCursor: string | null;
+        };
+      };
+    };
+  }>(COLLECTIONS_QUERY, { first, after });
+}
+
+// Fetch ALL collections (paginated)
+export async function fetchAllCollections(first: number = 250): Promise<ShopifyCollection[]> {
+  const all: ShopifyCollection[] = [];
+  let after: string | undefined;
+
+  // Safety guard: Shopify max is typically 250 per request.
+  const pageSize = Math.min(Math.max(first, 1), 250);
+
+  // Loop until all pages are fetched.
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const res = await fetchCollections(pageSize, after);
+    const edges = res.data.collections.edges;
+    all.push(...edges);
+
+    const pageInfo = res.data.collections.pageInfo;
+    if (!pageInfo.hasNextPage || !pageInfo.endCursor) break;
+    after = pageInfo.endCursor;
+  }
+
+  return all;
 }
 
 // Fetch Products by Collection Handle

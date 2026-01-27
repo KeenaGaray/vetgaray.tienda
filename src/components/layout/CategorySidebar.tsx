@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
-  fetchCollections, 
+  fetchAllCollections,
   ShopifyCollection 
 } from "@/lib/shopify";
 import { 
@@ -119,9 +119,9 @@ export function CategorySidebar({ isOpen, onClose }: CategorySidebarProps) {
   useEffect(() => {
     async function loadCollections() {
       try {
-        const response = await fetchCollections(100);
-        setCollections(response.data.collections.edges);
-        const builtTree = buildCollectionTree(response.data.collections.edges);
+        const all = await fetchAllCollections();
+        setCollections(all);
+        const builtTree = buildCollectionTree(all);
         setTree(builtTree);
       } catch (error) {
         console.error("Error loading collections:", error);
