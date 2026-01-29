@@ -8,31 +8,21 @@ import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { OffersCarousel } from "@/components/home/OffersCarousel";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Truck, Shield, Clock, Heart, ArrowRight, Loader2 } from "lucide-react";
+import categoryDogsImg from "@/assets/category-dogs.jpg";
+import categoryCatsImg from "@/assets/category-cats.jpg";
 
 const categories = [
   { 
     name: "Perros", 
     href: "/coleccion/perros", 
-    imageUrl: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80",
+    image: categoryDogsImg,
     description: "Alimentos, medicamentos y accesorios"
   },
   { 
     name: "Gatos", 
     href: "/coleccion/gatos", 
-    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
+    image: categoryCatsImg,
     description: "Todo para el cuidado felino"
-  },
-  { 
-    name: "Farmacia", 
-    href: "/coleccion/farmacia", 
-    imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&q=80",
-    description: "Medicamentos y tratamientos"
-  },
-  { 
-    name: "Accesorios", 
-    href: "/coleccion/accesorios", 
-    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80",
-    description: "Juguetes, camas y más"
   },
 ];
 
@@ -90,40 +80,41 @@ export default function Index() {
       <HeroCarousel />
 
       {/* Categories */}
-      <section className="py-12 md:py-16 px-4 sm:px-5 lg:px-8 2xl:px-10">
+      <section className="py-12 md:py-20 px-4 sm:px-5 lg:px-8 2xl:px-10">
         <div>
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="font-display font-extrabold text-foreground">Comprá por</h2>
-            <div className="flex bg-muted rounded-full p-1">
-              <Button size="sm" className="rounded-full font-bold">Todas las categorías</Button>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <h2 className="font-display font-extrabold text-foreground text-center mb-12">
+            Comprá por Categoría
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
             {categories.map((cat) => (
               <Link
                 key={cat.name}
                 to={cat.href}
-                className="group relative overflow-hidden rounded-2xl aspect-[4/5] shadow-card hover:shadow-hover transition-all"
+                className="group relative flex flex-col items-center text-center"
               >
-                {/* Background Image */}
-                <img
-                  src={cat.imageUrl}
-                  alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-6">
-                  <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-1 drop-shadow-lg">
-                    {cat.name}
-                  </h3>
-                  <p className="text-white/80 text-sm md:text-base drop-shadow">
-                    {cat.description}
-                  </p>
-                  <div className="mt-3 flex items-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    Ver productos <ArrowRight className="ml-2 h-4 w-4" />
-                  </div>
+                {/* Blob Background */}
+                <div className="absolute top-8 w-64 h-64 md:w-80 md:h-80 rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
+                
+                {/* Floating Image */}
+                <div className="relative z-10 mb-6">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-64 h-64 md:w-80 md:h-80 object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                
+                {/* Text Content */}
+                <h3 className="relative z-10 text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+                  {cat.name}
+                </h3>
+                <p className="relative z-10 text-muted-foreground mb-4">
+                  {cat.description}
+                </p>
+                
+                {/* Hover Button */}
+                <div className="relative z-10 flex items-center text-primary font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  Explorar <ArrowRight className="ml-2 h-4 w-4" />
                 </div>
               </Link>
             ))}
