@@ -501,32 +501,6 @@ export default function Collection() {
         </div>
       </section>
 
-      {/* Info Box */}
-      <section className="pb-16">
-        <div className="container">
-          <div className="bg-muted/50 rounded-xl p-6 border border-border">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              ¿Cómo agregar subcategorías?
-            </h3>
-            <p className="text-sm text-muted-foreground mb-3">
-              Las subcategorías se detectan automáticamente desde Shopify. Para crear una nueva:
-            </p>
-            <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-1">
-              <li>Andá a tu <a 
-                href="https://admin.shopify.com/store/k0ib9b-b0/collections/new" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >panel de Shopify → Crear colección</a></li>
-              <li>Nombrala con el formato: <strong>"{mapping.fallbackName} - NombreSubcategoría"</strong></li>
-              <li>Ejemplo: "{mapping.fallbackName} - Premium" o "{mapping.fallbackName} - Cachorros"</li>
-              <li>Asigná productos a esa colección</li>
-              <li>¡Listo! La subcategoría aparecerá automáticamente acá</li>
-            </ol>
-          </div>
-        </div>
-      </section>
     </Layout>
   );
 }
