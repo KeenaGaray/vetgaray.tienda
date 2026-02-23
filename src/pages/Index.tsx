@@ -93,22 +93,22 @@ export default function Index() {
                 className="group relative flex flex-col items-center text-center"
               >
                 {/* Blob Background */}
-                <div className="absolute top-8 w-64 h-64 md:w-80 md:h-80 rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
+                <div className="absolute top-12 w-80 h-80 md:w-96 md:h-96 rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
                 
                 {/* Floating Image */}
-                <div className="relative z-10 mb-6">
+                <div className="relative z-10 mb-2">
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="w-64 h-64 md:w-80 md:h-80 object-contain transition-transform duration-500 group-hover:scale-105"
+                    className="w-80 h-80 md:w-[26rem] md:h-[26rem] object-contain transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 
                 {/* Text Content */}
-                <h3 className="relative z-10 text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+                <h3 className="relative z-10 text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
                   {cat.name}
                 </h3>
-                <p className="relative z-10 text-muted-foreground mb-4">
+                <p className="relative z-10 text-muted-foreground mb-2">
                   {cat.description}
                 </p>
                 
