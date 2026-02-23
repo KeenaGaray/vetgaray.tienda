@@ -96,7 +96,7 @@ export default function Index() {
                 <div className="absolute top-12 w-80 h-80 md:w-96 md:h-96 rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
                 
                 {/* Floating Image */}
-                <div className="relative z-10 mb-2">
+                <div className="relative z-10 -mb-2">
                   <img
                     src={cat.image}
                     alt={cat.name}
