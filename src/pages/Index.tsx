@@ -93,14 +93,14 @@ export default function Index() {
                 className="group relative flex flex-col items-center text-center"
               >
                 {/* Blob Background */}
-                <div className="absolute top-12 w-80 h-80 md:w-96 md:h-96 rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
+                <div className="absolute top-16 w-96 h-96 md:w-[30rem] md:h-[30rem] rounded-full bg-primary/10 blur-3xl transition-all duration-500 group-hover:bg-primary/20 group-hover:scale-110" />
                 
                 {/* Floating Image */}
                 <div className="relative z-10 -mb-2">
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="w-80 h-80 md:w-[26rem] md:h-[26rem] object-contain transition-transform duration-500 group-hover:scale-105"
+                    className="w-96 h-96 md:w-[30rem] md:h-[30rem] object-contain transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 
