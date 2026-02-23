@@ -8,8 +8,8 @@ import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { OffersCarousel } from "@/components/home/OffersCarousel";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Truck, Shield, Clock, Heart, ArrowRight, Loader2 } from "lucide-react";
-import categoryDogsImg from "@/assets/category-dogs.jpg";
-import categoryCatsImg from "@/assets/category-cats.jpg";
+import categoryDogsImg from "@/assets/category-dogs.png";
+import categoryCatsImg from "@/assets/category-cats.png";
 
 const categories = [
   { 
