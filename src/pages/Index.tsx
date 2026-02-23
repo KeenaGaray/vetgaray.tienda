@@ -105,12 +105,9 @@ export default function Index() {
                 </div>
                 
                 {/* Text Content */}
-                <h3 className="relative z-10 text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
+                <h3 className="relative z-10 text-3xl md:text-4xl font-display font-bold text-foreground mb-2 uppercase tracking-wide">
                   {cat.name}
                 </h3>
-                <p className="relative z-10 text-muted-foreground mb-2">
-                  {cat.description}
-                </p>
                 
                 {/* Hover Button */}
                 <div className="relative z-10 flex items-center text-primary font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
