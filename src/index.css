@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,9 +27,9 @@
     --muted: 270 15% 94%;
     --muted-foreground: 270 10% 45%;
 
-    /* Accent: Warm Coral for CTAs */
-    --accent: 15 85% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: Light Gray for hover */
+    --accent: 0 0% 92%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -85,8 +85,8 @@
     --muted: 270 15% 18%;
     --muted-foreground: 270 10% 60%;
 
-    --accent: 15 80% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 25%;
+    --accent-foreground: 0 0% 95%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
@@ -218,6 +218,86 @@
     }
   }
 
+  /* Hero Carousel Animations */
+  @keyframes heroImageZoom {
+    from { transform: scale(1.0); }
+    to { transform: scale(1.08); }
+  }
+
+  @keyframes heroBadgeSlideIn {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes heroTitleSlideUp {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes heroSubtitleFadeUp {
+    from { opacity: 0; transform: translateX(-32px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes heroButtonsFadeIn {
+    from { opacity: 0; transform: translateX(-22px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes heroElementExitRight {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(260px); }
+  }
+
+  @keyframes heroProgressFill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  .hero-img-zoom {
+    animation: heroImageZoom 12s ease-in-out infinite alternate;
+  }
+
+  /* Entrada — desde la izquierda con stagger */
+  .hero-badge-in {
+    animation: heroBadgeSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  }
+  .hero-title-in {
+    animation: heroTitleSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+  }
+  .hero-subtitle-in {
+    animation: heroSubtitleFadeUp 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+  }
+  .hero-buttons-in {
+    animation: heroButtonsFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both;
+  }
+
+  /* Salida — disparado hacia la derecha con stagger */
+  .hero-badge-exit  { animation: heroElementExitRight 0.20s cubic-bezier(0.55, 0, 1, 0.45) 0.00s forwards; }
+  .hero-title-exit  { animation: heroElementExitRight 0.24s cubic-bezier(0.55, 0, 1, 0.45) 0.03s forwards; }
+  .hero-sub-exit    { animation: heroElementExitRight 0.20s cubic-bezier(0.55, 0, 1, 0.45) 0.07s forwards; }
+  .hero-btns-exit   { animation: heroElementExitRight 0.18s cubic-bezier(0.55, 0, 1, 0.45) 0.10s forwards; }
+
+  .hero-progress {
+    animation: heroProgressFill var(--progress-duration, 5000ms) linear forwards;
+  }
+
+  /* Promo grid fade-up entrance */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(36px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
   /* Coin flip animation */
   @keyframes coinFlip {
     0% {
@@ -236,4 +316,25 @@
   .coin-flip:hover {
     animation: coinFlip 0.6s ease-in-out;
   }
+
+  /* Product page description HTML (from Shopify descriptionHtml) */
+  .product-description p {
+    @apply mb-3 leading-relaxed;
+  }
+  .product-description ul,
+  .product-description ol {
+    @apply mb-3 pl-5 space-y-1;
+  }
+  .product-description ul { @apply list-disc; }
+  .product-description ol { @apply list-decimal; }
+  .product-description li { @apply leading-relaxed; }
+  .product-description strong,
+  .product-description b { @apply font-semibold text-foreground; }
+  .product-description h1,
+  .product-description h2,
+  .product-description h3 {
+    @apply font-display font-bold text-foreground mt-4 mb-2;
+  }
+  .product-description a { @apply text-primary underline; }
+  .product-description br + br { @apply hidden; } /* collapse double line breaks */
 }

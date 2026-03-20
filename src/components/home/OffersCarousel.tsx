@@ -1,22 +1,68 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { fetchProducts, ShopifyProduct, formatPrice, getDiscountPercentage } from "@/lib/shopify";
+import { fetchProducts, fetchCollectionProducts, ShopifyProduct, formatPrice, getDiscountPercentage } from "@/lib/shopify";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Loader2, Tag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoScroll from "embla-carousel-auto-scroll";
 
 export function OffersCarousel() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const plugins = useMemo(
+    () => [AutoScroll({ playOnInit: true, speed: 0.8, stopOnMouseEnter: false, stopOnInteraction: false })],
+    []
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, dragFree: true, align: "start" },
+    plugins
+  );
+
+  const handleMouseEnter = useCallback(() => {
+    hoverTimerRef.current = setTimeout(() => {
+      emblaApi?.plugins()?.autoScroll?.stop();
+    }, 700);
+  }, [emblaApi]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    emblaApi?.plugins()?.autoScroll?.play();
+  }, [emblaApi]);
 
   useEffect(() => {
     async function loadOffers() {
       try {
-        // Fetch products that have offers/discounts
-        const response = await fetchProducts(12, "tag:oferta OR tag:descuento OR tag:promocion");
-        setProducts(response.data.products.edges);
+        // 1. Intentar cargar desde la colección "ofertas"
+        const colResponse = await fetchCollectionProducts("ofertas", 24);
+        const colProducts = colResponse.data.collectionByHandle?.products.edges ?? [];
+
+        if (colProducts.length > 0) {
+          setProducts(colProducts);
+          return;
+        }
+
+        // 2. Fallback: productos con tag oferta/descuento/promocion
+        const tagResponse = await fetchProducts(24, "tag:oferta OR tag:descuento OR tag:promocion");
+        if (tagResponse.data.products.edges.length > 0) {
+          setProducts(tagResponse.data.products.edges);
+          return;
+        }
+
+        // 3. Fallback final: cualquier producto con precio tachado
+        const allResponse = await fetchProducts(50);
+        const withDiscount = allResponse.data.products.edges.filter(p => {
+          const v = p.node.variants.edges[0]?.node;
+          return v?.compareAtPrice && parseFloat(v.compareAtPrice.amount) > parseFloat(v.price.amount);
+        });
+        setProducts(withDiscount.slice(0, 24));
       } catch (error) {
         console.error("Error loading offers:", error);
       } finally {
@@ -62,10 +108,10 @@ export function OffersCarousel() {
           </Button>
         </div>
 
-        <div className="marquee">
-          <div className="marquee-track">
+        <div ref={emblaRef} className="overflow-hidden" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <div className="flex gap-4">
             {loopProducts.map((product, idx) => (
-              <div key={`${product.node.id}-${idx}`} className="marquee-item">
+              <div key={`${product.node.id}-${idx}`} className="flex-[0_0_auto]">
                 <OfferCard product={product} />
               </div>
             ))}

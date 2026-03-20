@@ -23,7 +23,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Nunito", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
         display: ["Archivo", "system-ui", "sans-serif"],
       },
       colors: {

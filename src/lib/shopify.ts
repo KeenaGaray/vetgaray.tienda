@@ -12,6 +12,7 @@ export interface ShopifyProduct {
     id: string;
     title: string;
     description: string;
+    descriptionHtml?: string;
     handle: string;
     productType: string;
     vendor: string;
@@ -104,7 +105,7 @@ export const PRODUCTS_QUERY = `
           images(first: 5) {
             edges {
               node {
-                url
+                url(transform: { maxWidth: 800, preferredContentType: WEBP })
                 altText
               }
             }
@@ -170,7 +171,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
       images(first: 10) {
         edges {
           node {
-            url
+            url(transform: { maxWidth: 1200, preferredContentType: WEBP })
             altText
           }
         }
@@ -215,7 +216,7 @@ export const COLLECTIONS_QUERY = `
           title
           description
           image {
-            url
+            url(transform: { maxWidth: 1200, preferredContentType: WEBP })
             altText
           }
         }
@@ -237,7 +238,7 @@ export const COLLECTION_PRODUCTS_QUERY = `
       title
       description
       image {
-        url
+        url(transform: { maxWidth: 1200, preferredContentType: WEBP })
         altText
       }
       products(first: $first, after: $after) {
@@ -265,7 +266,7 @@ export const COLLECTION_PRODUCTS_QUERY = `
             images(first: 5) {
               edges {
                 node {
-                  url
+                  url(transform: { maxWidth: 800, preferredContentType: WEBP })
                   altText
                 }
               }
@@ -354,8 +355,6 @@ export const CART_CREATE_MUTATION = `
 export async function storefrontApiRequest<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
     method: 'POST',
-    // Avoid stale storefront responses when updating collections/categories in Shopify.
-    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
@@ -450,26 +449,34 @@ export async function fetchCollections(first: number = 50, after?: string) {
   }>(COLLECTIONS_QUERY, { first, after });
 }
 
-// Fetch ALL collections (paginated)
+// Caché en memoria para colecciones (TTL: 5 minutos)
+let _collectionsCache: ShopifyCollection[] | null = null;
+let _collectionsCacheTime = 0;
+const COLLECTIONS_CACHE_TTL = 5 * 60 * 1000;
+
+// Fetch ALL collections (paginated) — con caché
 export async function fetchAllCollections(first: number = 250): Promise<ShopifyCollection[]> {
+  const now = Date.now();
+  if (_collectionsCache && now - _collectionsCacheTime < COLLECTIONS_CACHE_TTL) {
+    return _collectionsCache;
+  }
+
   const all: ShopifyCollection[] = [];
   let after: string | undefined;
-
-  // Safety guard: Shopify max is typically 250 per request.
   const pageSize = Math.min(Math.max(first, 1), 250);
 
-  // Loop until all pages are fetched.
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const res = await fetchCollections(pageSize, after);
     const edges = res.data.collections.edges;
     all.push(...edges);
-
     const pageInfo = res.data.collections.pageInfo;
     if (!pageInfo.hasNextPage || !pageInfo.endCursor) break;
     after = pageInfo.endCursor;
   }
 
+  _collectionsCache = all;
+  _collectionsCacheTime = now;
   return all;
 }
 
